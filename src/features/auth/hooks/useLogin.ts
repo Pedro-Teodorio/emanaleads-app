@@ -22,11 +22,14 @@ export function useLogin() {
 				toast.error('Login bem-sucedido, mas falha ao buscar seus dados.');
 			}
 		},
+
 		onError: (error) => {
 			if (axios.isAxiosError(error) && error.response?.status === 401) {
 				toast.error('Email ou senha inválidos.');
-			} else {
-				toast.error('Erro inesperado. Tente novamente.');
+			}
+
+			if (axios.isAxiosError(error) && error.response) {
+				toast.error(error.response.data.errors[0].message);
 			}
 		},
 	});

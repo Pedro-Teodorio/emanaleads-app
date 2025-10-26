@@ -1,15 +1,8 @@
 'use client';
-
 import { useAuthStore } from '@/store/auth.store';
-import { Button } from '@/components/ui/button';
-import { useLogout } from '@/features/auth/hooks/useLogout';
 
 export default function DashboardPage() {
   const user = useAuthStore(state => state.user);
-  const { mutate: logout, isPending } = useLogout();
-
-  const handleLogout = () => logout();
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md text-center">
@@ -19,7 +12,6 @@ export default function DashboardPage() {
         ) : (
           <p className="mb-6">Carregando dados do usuário...</p>
         )}
-        <Button isLoading={isPending} onClick={handleLogout}>Sair</Button>
       </div>
     </div>
   );
