@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Emanaleads App
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-16.0.0-blue)
+![React](https://img.shields.io/badge/React-19.2.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-First, run the development server:
+## Descrição
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+O **Emanaleads App** é uma aplicação moderna desenvolvida com **Next.js** e **React**, utilizando **TypeScript** e **TailwindCSS** para estilização. Este projeto é uma solução para gerenciamento de leads, com autenticação, dashboard e outras funcionalidades essenciais.
+
+---
+
+## Tecnologias Utilizadas
+
+-   **Next.js** 16.0.0
+-   **React** 19.2.0
+-   **TypeScript**
+-   **TailwindCSS**
+-   **Zod** para validação de dados
+-   **React Query** para gerenciamento de estado assíncrono
+-   **Zustand** para gerenciamento de estado global
+-   **Axios** para requisições HTTP
+
+---
+
+## Pré-requisitos
+
+Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
+
+-   **Node.js** (versão 16 ou superior)
+-   **pnpm** (gerenciador de pacotes)
+
+---
+
+## Instalação e Execução
+
+Siga os passos abaixo para configurar e executar o projeto localmente:
+
+1. Clone o repositório:
+
+    ```bash
+    git clone https://github.com/Pedro-Teodorio/emanaleads-app.git
+    ```
+
+2. Navegue até o diretório do projeto:
+
+    ```bash
+    cd emanaleads-app
+    ```
+
+3. Instale as dependências:
+
+    ```bash
+    pnpm install
+    ```
+
+4. Crie um arquivo `.env` baseado no `.env_example`:
+
+    ```bash
+    cp .env_example .env
+    ```
+
+5. Execute o projeto em modo de desenvolvimento:
+
+    ```bash
+    pnpm dev
+    ```
+
+6. Acesse a aplicação no navegador:
+
+    ```
+    http://localhost:3000
+    ```
+
+---
+
+## Scripts Disponíveis
+
+-   `pnpm dev`: Inicia o servidor de desenvolvimento.
+-   `pnpm build`: Gera a build de produção.
+-   `pnpm start`: Inicia o servidor em modo de produção.
+-   `pnpm test`: Executa os testes.
+-   `pnpm lint`: Executa o linter para verificar problemas no código.
+
+---
+
+## Estrutura do Projeto
+
+```plaintext
+src/
+├── app/
+│   ├── (auth)/
+│   │   ├── layout.tsx
+│   │   └── login/
+│   │       └── page.tsx
+│   ├── (main)/
+│   │   ├── layout.tsx
+│   │   └── dashboard/
+│   │       └── page.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── common/
+│   │   └── AppHeader.tsx
+│   └── ui/
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── form.tsx
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── sonner.tsx
+│       └── spinner.tsx
+├── features/
+│   ├── auth/
+│   │   ├── components/
+│   │   │   ├── AuthProvider.tsx
+│   │   │   ├── GuestRoute.tsx
+│   │   │   ├── LoginForm.test.tsx
+│   │   │   └── LoginForm.tsx
+│   │   ├── hooks/
+│   │   │   ├── useCheckAuth.ts
+│   │   │   ├── useLogin.ts
+│   │   │   └── useLogout.ts
+│   │   ├── schemas/
+│   │   │   └── loginSchema.ts
+│   │   ├── services/
+│   │   │   ├── login.ts
+│   │   │   └── user.ts
+│   │   └── types/
+│   │       ├── login.ts
+│   │       └── user.ts
+│   └── ...
+├── lib/
+│   ├── api.ts
+│   ├── providers.tsx
+│   └── utils.ts
+└── store/
+    └── auth.store.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Licença
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Contato
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-   **Autor**: Pedro Teodorio
+-   **GitHub**: [Pedro-Teodorio](https://github.com/Pedro-Teodorio)
