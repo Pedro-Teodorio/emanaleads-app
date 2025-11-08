@@ -68,7 +68,7 @@ export const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" isLoading={isPending} className="w-full bg-blue-700 hover:bg-blue-800 h-11">
+        <Button type="submit" loading={isPending} className="w-full bg-blue-700 hover:bg-blue-800 h-11">
           {isPending ? 'Entrando...' : 'Entrar'}
         </Button>
       </form>
