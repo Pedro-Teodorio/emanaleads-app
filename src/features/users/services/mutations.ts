@@ -7,7 +7,7 @@ import axios from 'axios';
 
 interface UserMutationProps {
 	setDialogOpen: (open: boolean) => void;
-	setEditingUser?: (user: User | null) => void;
+	setEditingUser: (user: User | null) => void;
 }
 
 export function useCreateUserMutation({ setDialogOpen, setEditingUser }: UserMutationProps) {
@@ -19,7 +19,7 @@ export function useCreateUserMutation({ setDialogOpen, setEditingUser }: UserMut
 			await queryClient.invalidateQueries({ queryKey: [UserQueriesKeys.GET_USER_LIST] });
 			toast.success('Usuário criado com sucesso!');
 			setDialogOpen(false);
-			setEditingUser?.(null);
+			setEditingUser(null);
 		},
 		onError: () => {
 			toast.error('Erro ao criar usuário!');
@@ -36,7 +36,7 @@ export function useUpdateUserMutation({ setDialogOpen, setEditingUser }: UserMut
 			await queryClient.invalidateQueries({ queryKey: [UserQueriesKeys.GET_USER_LIST] });
 			toast.success('Usuário atualizado com sucesso!');
 			setDialogOpen(false);
-			setEditingUser?.(null);
+			setEditingUser(null);
 		},
 		onError: () => {
 			toast.error('Erro ao atualizar usuário!');

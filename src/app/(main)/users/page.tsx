@@ -57,7 +57,10 @@ export default function UsersPage() {
                         <PageDescription>Gerencie os usuários do sistema Emanaleads</PageDescription>
                     </div>
                     <PageActions>
-                        <Button className="w-full bg-blue-900 text-white hover:bg-blue-800" onClick={() => setDialogOpen(true)}>
+                        <Button className="w-full bg-blue-900 text-white hover:bg-blue-800" onClick={() => {
+                            setEditingUser(null);
+                            setDialogOpen(true)
+                        }}>
                             <PlusCircle className="inline-block size-4" />
                             Novo Usuário
                         </Button>

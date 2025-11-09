@@ -43,9 +43,9 @@ export default function UserFormDialog({ open, onOpenChange, onSubmit, loading, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle> Novo Usuário</DialogTitle>
+          <DialogTitle>{user ? "Editar Usuário" : "Novo Usuário"}</DialogTitle>
           <DialogDescription>
-            Preencha os campos abaixo para criar um novo usuário.
+            {user ? "Edite as informações do usuário abaixo." : "Preencha os campos abaixo para criar um novo usuário."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -143,11 +143,14 @@ export default function UserFormDialog({ open, onOpenChange, onSubmit, loading, 
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => {
+                onOpenChange(false)
+                form.reset()
+              }}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={loading} className="bg-blue-900 text-white hover:bg-blue-800">
-                 {loading ? "Salvando..." : user ? "Atualizar" : "Criar"}
+                {loading ? "Salvando..." : user ? "Atualizar" : "Criar"}
               </Button>
             </DialogFooter>
 
