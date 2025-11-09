@@ -24,10 +24,10 @@ interface UserFormDialogProps {
   loading: boolean;
 }
 
-export default function UserFormDialog({ open, onOpenChange, onSubmit, loading }: UserFormDialogProps) {
+export default function UserFormDialog({ open, onOpenChange, onSubmit, loading, user }: UserFormDialogProps) {
 
   const form = useForm<UserFormSchema>({
-    defaultValues: {
+    values: user || {
       name: "",
       email: "",
       role: "ADMIN",
@@ -37,7 +37,7 @@ export default function UserFormDialog({ open, onOpenChange, onSubmit, loading }
     resolver: zodResolver(userFormSchema),
   })
 
- 
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -147,7 +147,7 @@ export default function UserFormDialog({ open, onOpenChange, onSubmit, loading }
                 Cancelar
               </Button>
               <Button type="submit" disabled={loading} className="bg-blue-900 text-white hover:bg-blue-800">
-                {loading ? "Salvando..." : "Criar"}
+                 {loading ? "Salvando..." : user ? "Atualizar" : "Criar"}
               </Button>
             </DialogFooter>
 

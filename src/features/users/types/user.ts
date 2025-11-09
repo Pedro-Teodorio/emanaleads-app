@@ -13,6 +13,6 @@ export interface User {
 	email: string;
 	phone: string;
 	role: UserRole;
-	status: string;
+	status: "ACTIVE" | "INACTIVE";
 	createdAt: string;
 }

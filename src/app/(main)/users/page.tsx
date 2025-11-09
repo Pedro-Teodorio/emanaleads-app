@@ -9,18 +9,44 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import UserFormDialog from "@/features/users/components/UserCreateFormDialog";
 import UserGrid from "@/features/users/components/UserGrid";
-import { useCreateUserMutation } from "@/features/users/services/mutations";
+import { useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation } from "@/features/users/services/mutations";
 import { usersQueries } from "@/features/users/services/queries";
+import { User } from "@/features/users/types/user";
+import { UserFormSchema } from "@/features/users/schemas/user";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
 import { useState } from "react";
+import UserDeleteDialog from "@/features/users/components/UserDeleteDialog";
 
 
 export default function UsersPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState("");
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+
     const { data, isLoading } = useQuery(usersQueries.all());
-    const { mutate: createUser, isPending: createLoading } = useCreateUserMutation(setDialogOpen);
+    const { mutate: createUser, isPending: createLoading } = useCreateUserMutation({ setDialogOpen, setEditingUser });
+    const { mutate: updateUser, isPending: updateLoading } = useUpdateUserMutation({ setDialogOpen, setEditingUser });
+    const { mutate: deleteUser, isPending: deleteLoading } = useDeleteUserMutation({ setDeleteDialogOpen });
+
+    const handleSubmit = (data: UserFormSchema) => {
+        if (editingUser) {
+            updateUser({ id: editingUser.id, user: data });
+        } else {
+            createUser(data);
+        }
+    }
+    const handleEdit = (user: User) => {
+        setEditingUser(user);
+        setDialogOpen(true);
+    };
+
+    const handleDelete = (id: string) => {
+        setDeleteDialogOpen(true);
+        setDeleteId(id);
+    }
 
     return (
         <>
@@ -47,16 +73,28 @@ export default function UsersPage() {
                             className="pl-10"
                         />
                     </div>
-                    <UserGrid users={data || []} loading={isLoading} />
+                    <UserGrid
+                        users={data || []}
+                        loading={isLoading}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
                 </PageContent>
             </PageContainer>
             <UserFormDialog
-                loading={createLoading}
                 open={dialogOpen}
                 onOpenChange={setDialogOpen}
-                onSubmit={async (user) => {
-                    await createUser(user);
-                }}
+                user={editingUser || undefined}
+                onSubmit={handleSubmit}
+                loading={createLoading || updateLoading}
+            />
+
+            <UserDeleteDialog
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onSubmit={deleteUser}
+                loading={deleteLoading}
+                userId={deleteId}
             />
         </>
     );

@@ -1,26 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useDeleteUserMutation } from "../services/mutations";
 
 interface UserDeleteDialogProps {
-    isOpen: boolean;
+    open: boolean;
     onOpenChange: (open: boolean) => void;
+    onSubmit: (id: string) => void;
     userId: string;
+    loading: boolean;
 }
+
 export default function UserDeleteDialog({
-    isOpen,
+    open,
     onOpenChange,
-    userId
+    onSubmit,
+    userId,
+    loading
 }: UserDeleteDialogProps) {
-    const { mutate: deleteUser, isPending: deleteLoading } = useDeleteUserMutation(onOpenChange);
+    
     return (
         <Dialog
-            open={isOpen}
+            open={open}
             onOpenChange={onOpenChange}
         >
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle> Confirmar Excluir Usuário</DialogTitle>
+                    <DialogTitle>Confirmar Excluir Usuário</DialogTitle>
                     <DialogDescription>
                         Tem certeza que deseja excluir este usuário?
                     </DialogDescription>
@@ -29,8 +33,13 @@ export default function UserDeleteDialog({
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                         Cancelar
                     </Button>
-                    <Button type="button" onClick={() => deleteUser(userId)} disabled={deleteLoading} className="bg-red-900 text-white hover:bg-red-800">
-                        {deleteLoading ? "Excluindo..." : "Excluir"}
+                    <Button 
+                        type="button" 
+                        onClick={() => onSubmit(userId)} 
+                        disabled={loading} 
+                        className="bg-red-700 text-white hover:bg-red-800"
+                    >
+                        {loading ? "Excluindo..." : "Excluir"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

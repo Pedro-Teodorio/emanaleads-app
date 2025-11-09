@@ -7,8 +7,6 @@ import { motion } from "motion/react";
 import { format } from "date-fns";
 import { roleConfig, } from "@/mocks/users";
 import { User } from "../types/user";
-import { useState } from "react";
-import UserDeleteDialog from "./UserDeleteDialog";
 
 const statusConfig = {
     ACTIVE: { label: "Ativo", color: "bg-green-100 text-green-800 border-green-200" },
@@ -18,11 +16,12 @@ const statusConfig = {
 interface UserGridProps {
     users: User[];
     loading: boolean;
+    onEdit: (user: User) => void;
+    onDelete: (id: string) => void;
 }
 
-export default function UserGrid({ users, loading }: UserGridProps) {
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [deleteId, setDeleteId] = useState("");
+export default function UserGrid({ users, loading, onEdit, onDelete }: UserGridProps) {
+
 
 
     if (loading) {
@@ -116,7 +115,7 @@ export default function UserGrid({ users, loading }: UserGridProps) {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => { }}
+                                            onClick={() => { onEdit(user) }}
                                             className="flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                                         >
                                             <Pencil className="w-4 h-4 mr-2" />
@@ -125,7 +124,7 @@ export default function UserGrid({ users, loading }: UserGridProps) {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => { setDeleteId(user.id); setDeleteDialogOpen(true); }}
+                                            onClick={() => { onDelete(user.id); }}
                                             className="hover:bg-red-50 hover:text-red-600 hover:border-red-300"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -139,11 +138,7 @@ export default function UserGrid({ users, loading }: UserGridProps) {
                 ))}
             </div>
 
-            <UserDeleteDialog
-                isOpen={deleteDialogOpen}
-                onOpenChange={setDeleteDialogOpen}
-                userId={deleteId}
-            />
+
         </>
     );
 }
