@@ -15,7 +15,8 @@ export function useCreateProjectMutation({ setDialogOpen, setEditingProject }: P
 	return useMutation({
 		mutationFn: createProject,
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST] });
+			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST, { page: 1, limit: 10 }] });
+			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_RECENT_PROJECT_LIST] });
 			toast.success('Projeto criado com sucesso!');
 			setDialogOpen(false);
 			setEditingProject(null);
@@ -32,7 +33,7 @@ export function useUpdateProjectMutation({ setDialogOpen, setEditingProject }: P
 	return useMutation({
 		mutationFn: ({ id, project }: { id: string; project: ProjectFormSchema }) => updateProject(id, project),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST] });
+			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST, { page: 1, limit: 10 }] });
 			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_RECENT_PROJECT_LIST] });
 			toast.success('Projeto atualizado com sucesso!');
 			setDialogOpen(false);

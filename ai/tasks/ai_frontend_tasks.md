@@ -1,64 +1,64 @@
-# Plano de Execução da Tarefa: Implementar Paginação de Usuários
+# Plano de Execução da Tarefa: Implementar Paginação de Projetos
 
 ## 1.1. Análise da Arquitetura
 
-- [x] A nova funcionalidade de paginação será implementada na feature de `users`.
+- [x] A nova funcionalidade de paginação será implementada na feature de `projects`, seguindo o padrão já estabelecido na feature `users`.
 - [x] Arquivos impactados:
-    - `src/features/users/services/users.ts`: Para atualizar a busca de dados.
-    - `src/features/users/types/user.ts`: Para adicionar os tipos da resposta paginada.
-    - `src/features/users/components/UserGrid.tsx`: Mantido como componente de exibição.
-    - `src/app/(main)/users/page.tsx`: Para passar os parâmetros de busca (query params da URL) e orquestrar a paginação.
-    - `src/components/common/Pagination.tsx`: Componente de paginação existente utilizado.
-- [x] A implementação seguirá os padrões existentes de separação de responsabilidades (service para API, components para UI, page para orquestração).
+    - `src/features/projects/services/projects.ts`: Para atualizar a busca de dados.
+    - `src/features/projects/types/projects.ts`: Para adicionar os tipos da resposta paginada.
+    - `src/features/projects/services/queries.ts`: Para atualizar a query do React Query.
+    - `src/app/(main)/projects/page.tsx`: Para orquestrar a paginação e a busca.
+    - `src/components/common/Pagination.tsx`: Será utilizado para a UI de paginação.
+- [x] A implementação manterá a separação de responsabilidades existente.
 
 ## 1.2. Análise do Design System
 
-- [x] Utilizar os componentes `Button`, `Table` e `Select` de `shadcn/ui` que já estão no projeto.
-- [x] Foi utilizado o componente `src/components/common/Pagination.tsx` existente para a interface de paginação.
+- [x] Utilizar o componente `Pagination` existente em `src/components/common/Pagination.tsx`.
+- [x] Utilizar os componentes `Button`, `Input`, etc., do `shadcn/ui` que já estão em uso.
 
 ## 1.3. Análise dos Componentes
 
-- [x] **Modificar:** `src/features/users/components/UserGrid.tsx`. Este componente continua responsável por renderizar a tabela, recebendo os dados já paginados.
-- [x] **Modificar:** `src/app/(main)/users/page.tsx`. A página lê os query params da URL (`page`, `limit`, `search`) e passa-os para a busca de dados, além de renderizar o `UserGrid` e o componente `Pagination`.
-- [x] **Utilizar:** O componente `src/components/common/Pagination.tsx` existente.
+- [x] **Modificar:** `src/app/(main)/projects/page.tsx`. Este componente será o orquestrador da lógica de paginação, lendo e escrevendo na URL e passando os dados para os componentes filhos.
+- [x] **Modificar:** `src/features/projects/components/ProjectGrid.tsx`. Apenas para garantir que continue recebendo a lista de projetos corretamente. Nenhuma mudança de lógica é esperada aqui.
 
 ## 1.4. Análise das Regras de Negócio
 
-- [x] A lógica de busca de dados foi atualizada para incluir os parâmetros `page` e `limit`.
-- [x] O estado da paginação (página atual, total de páginas, itens por página) é gerenciado pela `UsersPage` e refletido na URL.
-- [x] A URL é a fonte da verdade para o estado da paginação, usando query params (`?page=1&limit=10`).
-- [x] Os botões de navegação ("Anterior", "Próxima") são habilitados/desabilitados com base na página atual e no total de páginas, conforme a implementação do componente `Pagination`.
+- [x] A lógica de busca de dados foi atualizada para incluir os parâmetros `page`, `limit` e `search`.
+- [x] A URL será a fonte da verdade para o estado da paginação (`?page=1&limit=10&search=...`).
+- [x] A `UsersPage` será responsável por ler os `searchParams`, acionar a busca de dados com `useQuery`, e fornecer os handlers para navegação de página e busca, que por sua vez atualizam a URL.
 
 ## 1.5. Definição de Componentes a Serem Criados/Modificados
 
-- [x] `src/features/users/types/user.ts`: (Modificar) Adicionado tipos `UserAPIResponse` e `PaginationMeta` para mapear a resposta da API.
-- [x] `src/features/users/services/users.ts`: (Modificar) Alterada a função `fetchUserList` para aceitar `page`, `limit` e `search` e retornar a resposta paginada.
-- [x] `src/features/users/services/queries.ts`: (Modificar) Atualizada a query para usar os novos parâmetros.
-- [x] `src/app/(main)/users/page.tsx`: (Modificar) Refatorado para gerenciar o estado da paginação e busca via URL, e para renderizar o `UserGrid` e o componente `Pagination`.
+- [x] `src/features/projects/types/projects.ts`: (Modificar) Adicionar tipos `ProjectAPIResponse` e `PaginationMeta`.
+- [x] `src/features/projects/services/projects.ts`: (Modificar) Alterar a função `fetchProjectsList` para aceitar `{ page, limit, search }` e retornar a resposta paginada.
+- [x] `src/features/projects/services/queries.ts`: (Modificar) Alterar a query `projectsQueries.all` para `projectsQueries.list` e fazê-la aceitar os parâmetros de paginação.
+- [x] `src/app/(main)/projects/page.tsx`: (Refatorar) Implementar a lógica de controle da paginação, similar à `UsersPage`.
 
 ## 1.6. Definição da Estrutura de Tela e Navegação
 
-- [x] A rota `/users` continua a mesma.
-- [x] O estado da paginação é refletido na URL através de query strings, ex: `/users?page=2&limit=10&search=John`.
+- [x] A rota `/projects` continuará a mesma.
+- [x] O estado da paginação será refletido na URL através de query strings.
 
 ## 1.7. Plano de Implementação das Regras de Negócio
 
-1.  [x] **Tipagem:** Definidos os tipos para a resposta da API (`UserAPIResponse`, `PaginationMeta`) em `src/features/users/types/user.ts`.
-2.  [x] **Serviço:** Atualizado `fetchUserList` em `src/features/users/services/users.ts` para aceitar `{ page, limit, search }` e construir a URL com query params.
-3.  [x] **Componente de Página:** Simplificado `app/(main)/users/page.tsx` para apenas renderizar o `UserGrid` e o componente `Pagination`, passando os `searchParams` e gerenciando a navegação.
-4.  [x] **Componente da Tabela (`UserGrid.tsx`):** A lógica de busca e paginação foi centralizada na `UsersPage`, e o `UserGrid` atua como componente de exibição. O componente `src/components/common/Pagination.tsx` foi integrado.
-5.  [x] **Validação:** Testar a navegação entre páginas, a mudança de limite de itens e a busca, garantindo que a URL e os dados exibidos estejam sempre sincronizados.
+1.  [x] **Tipagem:** Definir os tipos `ProjectAPIResponse` e `PaginationMeta` em `src/features/projects/types/projects.ts`.
+2.  [x] **Serviço:** Atualizar `fetchProjectsList` em `src/features/projects/services/projects.ts` para aceitar `{ page, limit, search }`.
+3.  [x] **Query:** Atualizar `projectsQueries` em `src/features/projects/services/queries.ts` para passar os parâmetros para a função de fetch e para a `queryKey`.
+4.  [x] **Componente de Página:** Refatorar `app/(main)/projects/page.tsx` para:
+    - Usar `useSearchParams`, `useRouter` e `usePathname`.
+    - Ler `page`, `limit`, e `search` da URL.
+    - Chamar `useQuery(projectsQueries.list({ ...params }))`.
+    - Implementar handlers para busca e mudança de página que atualizam a URL.
+    - Renderizar o `ProjectGrid` com os dados paginados e o componente `Pagination` com os metadados.
 
 ## 1.8. Plano de Validação da Tarefa
 
-- [x] A tabela de usuários carrega a primeira página por padrão.
-- [x] A URL reflete a página e o limite atuais (ex: `/users?page=1&limit=10`).
-- [x] Clicar em "Próxima" atualiza a URL para `?page=2` e carrega os novos dados.
-- [x] Clicar em "Anterior" na página 2 atualiza a URL para `?page=1` e carrega os dados da primeira página.
-- [x] O botão "Anterior" está desabilitado na página 1.
-- [x] O botão "Próxima" está desabilitado na última página.
-- [x] A busca de usuário funciona em conjunto com a paginação.
+- [ ] A lista de projetos carrega a primeira página por padrão.
+- [ ] A URL reflete a página e o limite atuais (ex: `/projects?page=1&limit=10`).
+- [ ] Clicar em "Próxima" no componente de paginação atualiza a URL e carrega os novos dados.
+- [ ] A busca por nome de projeto funciona e reseta a paginação para a página 1.
+- [ ] Os botões de paginação são desabilitados corretamente na primeira e última página.
 
 ## 1.9. Critérios de Sucesso para a Tarefa
 
-- [x] O usuário pode navegar por todas as páginas da lista de usuários. A interface de paginação é clara, funcional e sincronizada com a URL, permitindo uma experiência de usuário fluida e o compartilhamento de links para páginas específicas da lista.
+- [ ] O usuário pode navegar por todas as páginas da lista de projetos. A interface de paginação é funcional e sincronizada com a URL, permitindo uma experiência de usuário fluida e o compartilhamento de links para páginas específicas da lista.

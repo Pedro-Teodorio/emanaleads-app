@@ -1,9 +1,26 @@
 import { api } from '@/lib/api';
-import { Project } from '../types/projects';
+import { Project, ProjectAPIResponse } from '../types/projects';
 import { ProjectFormSchema } from '../schemas/projects';
 
-export const fetchProjectsList = async (): Promise<Project[]> => {
-	const { data } = await api.get('/projects');
+interface GetProjectsParams {
+	page?: number;
+	limit?: number;
+	search?: string;
+}
+
+export const fetchProjectsList = async ({
+	page = 1,
+	limit = 10,
+	search,
+}: GetProjectsParams): Promise<ProjectAPIResponse> => {
+	const params = new URLSearchParams();
+	params.append('page', page.toString());
+	params.append('limit', limit.toString());
+	if (search) {
+		params.append('search', search);
+	}
+
+	const { data } = await api.get(`/projects?${params.toString()}`);
 	return data;
 };
 

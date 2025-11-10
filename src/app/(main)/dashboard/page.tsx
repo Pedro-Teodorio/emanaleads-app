@@ -11,10 +11,10 @@ import { Activity, FolderKanban, Users } from 'lucide-react';
 
 export default function DashboardPage() {
   const { data: usersData, isLoading: isLoadingUsers } = useQuery(usersQueries.list({ page: 1, limit: 10 }));
-  const { data: projectsData, isLoading: isLoadingProjects } = useQuery(projectsQueries.all());
+  const { data: projectsData, isLoading: isLoadingProjects } = useQuery(projectsQueries.list({ page: 1, limit: 10 }));
   const { data: recentProjectsData, isLoading: isLoadingRecentProjects } = useQuery(projectsQueries.recent());
-  const activeProjects = projectsData?.filter((project) => project.status === 'ACTIVE').length || 0;
-  const totalProjects = projectsData?.length || 0;
+  const activeProjects = projectsData?.data?.filter((project) => project.status === 'ACTIVE').length || 0;
+  const totalProjects = projectsData?.meta.total;
 
   return (
     <PageContainer>
@@ -45,7 +45,7 @@ export default function DashboardPage() {
           />
           <StatsCard
             title="Total de Projetos"
-            value={totalProjects}
+            value={totalProjects || 0}
             icon={FolderKanban}
             gradient="from-purple-500 to-purple-600"
             loading={isLoadingProjects}

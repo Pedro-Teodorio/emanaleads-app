@@ -1,3 +1,5 @@
+import { PaginationMeta } from "@/features/users/types/user";
+
 export enum ProjectQueriesKeys {
 	GET_PROJECT_LIST = 'GET_PROJECT_LIST',
 	GET_RECENT_PROJECT_LIST = 'GET_RECENT_PROJECT_LIST',
@@ -11,4 +13,9 @@ export interface Project {
 	createdAt: string;
 	updatedAt: string;
 	adminId: string;
+}
+
+export interface ProjectAPIResponse {
+	data: Project[];
+	meta: PaginationMeta;
 }
