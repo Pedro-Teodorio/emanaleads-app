@@ -1,5 +1,6 @@
 export enum ProjectQueriesKeys {
 	GET_PROJECT_LIST = 'GET_PROJECT_LIST',
+	GET_RECENT_PROJECT_LIST = 'GET_RECENT_PROJECT_LIST',
 }
 
 export interface Project {

@@ -7,6 +7,11 @@ export const fetchProjectsList = async (): Promise<Project[]> => {
 	return data;
 };
 
+export const listRecentProjects = async (): Promise<Project[]> => {
+	const { data } = await api.get('/projects/recent');
+	return data;
+};
+
 export const createProject = async (project: ProjectFormSchema): Promise<Project> => {
 	const { data } = await api.post('/projects', project);
 	return data;

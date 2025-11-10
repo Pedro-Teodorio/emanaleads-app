@@ -5,13 +5,8 @@ import { Pencil, Trash2, Phone, Calendar, UserX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "motion/react";
 import { format } from "date-fns";
-import { roleConfig, } from "@/mocks/users";
 import { User } from "../types/user";
-
-const statusConfig = {
-    ACTIVE: { label: "Ativo", color: "bg-green-100 text-green-800 border-green-200" },
-    INACTIVE: { label: "Inativo", color: "bg-gray-100 text-gray-800 border-gray-200" },
-};
+import { roleConfig, statusConfig } from "../constants/users";
 
 interface UserGridProps {
     users: User[];

@@ -3,13 +3,18 @@ import { PageContainer, PageContent, PageDescription, PageHeader, PageTitle } fr
 import RecentProjects from '@/features/dashboard/components/RecentProjects';
 import StatsCard from '@/features/dashboard/components/StatsCard';
 import TeamOverview from '@/features/dashboard/components/TeamOverview';
-import { projects } from '@/mocks/projects';
-import { users } from '@/mocks/users';
+import { projectsQueries } from '@/features/projects/services/queries';
+import { usersQueries } from '@/features/users/services/queries';
+import { useQuery } from '@tanstack/react-query';
 import { Activity, FolderKanban, Users } from 'lucide-react';
 
 
 export default function DashboardPage() {
-  const activeProjects = projects.filter((project) => project.status === 'active').length;
+  const { data: usersData, isLoading: isLoadingUsers } = useQuery(usersQueries.all());
+  const { data: projectsData, isLoading: isLoadingProjects } = useQuery(projectsQueries.all());
+  const { data: recentProjectsData, isLoading: isLoadingRecentProjects } = useQuery(projectsQueries.recent());
+  const activeProjects = projectsData?.filter((project) => project.status === 'ACTIVE').length || 0;
+  const totalProjects = projectsData?.length || 0;
 
   return (
     <PageContainer>
@@ -26,33 +31,33 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatsCard
             title="Total de Usuários"
-            value={users.length}
+            value={usersData?.length || 0}
             icon={Users}
             gradient="from-blue-500 to-blue-600"
-            loading={false}
+            loading={isLoadingUsers}
           />
           <StatsCard
             title="Projetos Ativos"
             value={activeProjects}
             icon={Activity}
             gradient="from-green-500 to-green-600"
-            loading={false}
+            loading={isLoadingProjects}
           />
           <StatsCard
             title="Total de Projetos"
-            value={projects.length}
+            value={totalProjects}
             icon={FolderKanban}
             gradient="from-purple-500 to-purple-600"
-            loading={false}
+            loading={isLoadingProjects}
           />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <RecentProjects projects={projects} loading={false} />
+            <RecentProjects projects={recentProjectsData || []} loading={isLoadingRecentProjects} />
           </div>
           <div>
-            <TeamOverview users={users} loading={false} />
+            <TeamOverview users={usersData || []} loading={isLoadingUsers} />
           </div>
         </div>
       </PageContent>

@@ -7,9 +7,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Link from "next/link";
-import { RecentProjectsProps, statusConfig } from "@/mocks/projects";
+import { Project } from "@/features/projects/types/projects";
+import { statusConfig } from "@/features/projects/constants/project";
 
-export default function RecentProjects({ projects, loading }: RecentProjectsProps) {    
+
+export interface RecentProjectsProps {
+  projects: Project[];
+  loading: boolean;
+}
+
+export default function RecentProjects({ projects, loading }: RecentProjectsProps) {
   const recentProjects = projects.slice(0, 5);
 
   return (
@@ -20,7 +27,7 @@ export default function RecentProjects({ projects, loading }: RecentProjectsProp
             <FolderKanban className="w-5 h-5 text-slate-600" />
             Projetos Recentes
           </CardTitle>
-          <Link href="#">
+          <Link href="/projects">
             <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
               Ver todos
               <ArrowRight className="w-4 h-4" />
@@ -51,7 +58,7 @@ export default function RecentProjects({ projects, loading }: RecentProjectsProp
             {recentProjects.map((project) => (
               <Link
                 key={project.id}
-                href={`/projects/${project.id}`}
+                href={`#`}
                 className="block"
               >
                 <div className="p-4 border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-md transition-all duration-200 group">
@@ -65,10 +72,10 @@ export default function RecentProjects({ projects, loading }: RecentProjectsProp
                           {project.description}
                         </p>
                       )}
-                      {project.start_date && (
+                      {project.createdAt && (
                         <div className="flex items-center gap-1 mt-2 text-xs text-slate-500">
                           <Calendar className="w-3 h-3" />
-                          {format(new Date(project.start_date), "dd/MM/yyyy", { locale: ptBR })}
+                          {format(new Date(project.createdAt), "dd/MM/yyyy", { locale: ptBR })}
                         </div>
                       )}
                     </div>

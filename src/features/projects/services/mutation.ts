@@ -33,6 +33,7 @@ export function useUpdateProjectMutation({ setDialogOpen, setEditingProject }: P
 		mutationFn: ({ id, project }: { id: string; project: ProjectFormSchema }) => updateProject(id, project),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST] });
+			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_RECENT_PROJECT_LIST] });
 			toast.success('Projeto atualizado com sucesso!');
 			setDialogOpen(false);
 			setEditingProject(null);
@@ -48,10 +49,11 @@ export function useUpdateProjectMutation({ setDialogOpen, setEditingProject }: P
 export function useDeleteProjectMutation({ setProjectDeleteDialogOpen }: { setProjectDeleteDialogOpen: (open: boolean) => void }) {
 	const queryClient = useQueryClient();
 
-		return useMutation({
+	return useMutation({
 		mutationFn: (id: string) => deleteProject(id),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST] });
+			await queryClient.invalidateQueries({ queryKey: [ProjectQueriesKeys.GET_RECENT_PROJECT_LIST] });
 			toast.success('Projeto excluído com sucesso!');
 			setProjectDeleteDialogOpen(false);
 		},

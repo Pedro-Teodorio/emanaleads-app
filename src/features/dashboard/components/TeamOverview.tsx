@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { roleConfig, User } from "@/mocks/users";
+import { User } from "@/features/users/types/user";
+import { roleConfig } from "@/features/users/constants/users";
+
 
 export default function TeamOverview({ users, loading }: { users: User[], loading: boolean }) {
     const roleStats = React.useMemo(() => {
