@@ -30,6 +30,7 @@ export default function UserFormDialog({ open, onOpenChange, onSubmit, loading, 
     values: user || {
       name: "",
       email: "",
+      phone: "",
       role: "ADMIN",
       status: "ACTIVE",
     },

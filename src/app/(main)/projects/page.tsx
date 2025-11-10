@@ -30,7 +30,7 @@ export default function ProjectsPage() {
     const [editingProject, setEditingProject] = useState<Project | null>(null);
 
     const { data, isLoading } = useQuery(projectsQueries.all())
-    const { data: usersData, isLoading: usersLoading } = useQuery(usersQueries.all())
+    const { data: usersData, isLoading: usersLoading } = useQuery(usersQueries.list({ page: 1, limit: 6 }))
     const { mutate: createProject, isPending: createLoading } = useCreateProjectMutation({ setDialogOpen, setEditingProject })
     const { mutate: updateProject, isPending: updateLoading } = useUpdateProjectMutation({ setDialogOpen, setEditingProject })
     const { mutate: deleteProject, isPending: deleteLoading } = useDeleteProjectMutation({ setProjectDeleteDialogOpen })
@@ -87,7 +87,7 @@ export default function ProjectsPage() {
                     </div>
                     <ProjectGrid
                         projects={data || []}
-                        users={usersData || []}
+                        users={usersData?.data || []}
                         loading={isLoading || usersLoading}
                         onEdit={handleEditProject}
                         onDelete={handleDeleteProject}
@@ -99,7 +99,7 @@ export default function ProjectsPage() {
                 loading={createLoading || updateLoading}
                 onOpenChange={setDialogOpen}
                 onSubmit={onSubmit}
-                users={usersData?.filter(u => u.role === 'ADMIN') || []}
+                users={usersData?.data?.filter(u => u.role === 'ADMIN') || []}
                 project={editingProject || undefined}
             />
             <ProjectDeleteDialog

@@ -9,7 +9,7 @@ import { User } from "../types/user";
 import { roleConfig, statusConfig } from "../constants/users";
 
 interface UserGridProps {
-    users: User[];
+    users?: User[];
     loading: boolean;
     onEdit: (user: User) => void;
     onDelete: (id: string) => void;
@@ -40,7 +40,7 @@ export default function UserGrid({ users, loading, onEdit, onDelete }: UserGridP
         );
     }
 
-    if (users.length === 0) {
+    if (users?.length === 0) {
         return (
             <div className="text-center py-12">
                 <UserX className="w-12 h-12 text-slate-300 mx-auto mb-3" />
@@ -52,7 +52,7 @@ export default function UserGrid({ users, loading, onEdit, onDelete }: UserGridP
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {users.map((user, index) => (
+                {users?.map((user, index) => (
                     <motion.div
                         key={user.id}
                         initial={{ opacity: 0, y: 20 }}

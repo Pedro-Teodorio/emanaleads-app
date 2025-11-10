@@ -10,7 +10,7 @@ import { Activity, FolderKanban, Users } from 'lucide-react';
 
 
 export default function DashboardPage() {
-  const { data: usersData, isLoading: isLoadingUsers } = useQuery(usersQueries.all());
+  const { data: usersData, isLoading: isLoadingUsers } = useQuery(usersQueries.list({ page: 1, limit: 10 }));
   const { data: projectsData, isLoading: isLoadingProjects } = useQuery(projectsQueries.all());
   const { data: recentProjectsData, isLoading: isLoadingRecentProjects } = useQuery(projectsQueries.recent());
   const activeProjects = projectsData?.filter((project) => project.status === 'ACTIVE').length || 0;
@@ -31,7 +31,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatsCard
             title="Total de Usuários"
-            value={usersData?.length || 0}
+            value={usersData?.data.length || 0}
             icon={Users}
             gradient="from-blue-500 to-blue-600"
             loading={isLoadingUsers}
@@ -57,7 +57,7 @@ export default function DashboardPage() {
             <RecentProjects projects={recentProjectsData || []} loading={isLoadingRecentProjects} />
           </div>
           <div>
-            <TeamOverview users={usersData || []} loading={isLoadingUsers} />
+            <TeamOverview users={usersData?.data || []} loading={isLoadingUsers} />
           </div>
         </div>
       </PageContent>

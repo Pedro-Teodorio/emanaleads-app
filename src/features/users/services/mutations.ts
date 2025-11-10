@@ -16,7 +16,7 @@ export function useCreateUserMutation({ setDialogOpen, setEditingUser }: UserMut
 	return useMutation({
 		mutationFn: createUser,
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: [UserQueriesKeys.GET_USER_LIST] });
+			await queryClient.invalidateQueries({ queryKey: [UserQueriesKeys.GET_USER_LIST, { page: 1, limit: 6 }] });
 			toast.success('Usuário criado com sucesso!');
 			setDialogOpen(false);
 			setEditingUser(null);
@@ -33,7 +33,7 @@ export function useUpdateUserMutation({ setDialogOpen, setEditingUser }: UserMut
 	return useMutation({
 		mutationFn: ({ id, user }: { id: string; user: UserFormSchema }) => updateUser(id, user),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: [UserQueriesKeys.GET_USER_LIST] });
+			await queryClient.invalidateQueries({ queryKey: [UserQueriesKeys.GET_USER_LIST, { page: 1, limit: 6 }] });
 			toast.success('Usuário atualizado com sucesso!');
 			setDialogOpen(false);
 			setEditingUser(null);

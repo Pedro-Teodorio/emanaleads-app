@@ -1,9 +1,26 @@
 import { api } from '@/lib/api';
-import { User } from '../types/user';
+import { User, UserAPIResponse } from '../types/user';
 import { UserFormSchema } from '../schemas/user';
 
-export const fetchUserList = async (): Promise<User[]> => {
-	const { data } = await api.get('/users');
+interface GetUsersParams {
+	page?: number;
+	limit?: number;
+	search?: string;
+}
+
+export const fetchUserList = async ({
+	page = 1,
+	limit = 10,
+	search,
+}: GetUsersParams): Promise<UserAPIResponse> => {
+	const params = new URLSearchParams();
+	params.append('page', page.toString());
+	params.append('limit', limit.toString());
+	if (search) {
+		params.append('search', search);
+	}
+
+	const { data } = await api.get(`/users?${params.toString()}`);
 	return data;
 };
 
@@ -13,7 +30,7 @@ export const createUser = async (user: UserFormSchema): Promise<User> => {
 };
 
 export const updateUser = async (id: string, user: UserFormSchema): Promise<User> => {
-	const { data } = await api.put(`/users/${id}`, user);	
+	const { data } = await api.put(`/users/${id}`, user);
 	return data;
 };
 

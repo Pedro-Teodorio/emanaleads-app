@@ -13,6 +13,18 @@ export interface User {
 	email: string;
 	phone: string;
 	role: UserRole;
-	status: "ACTIVE" | "INACTIVE";
+	status: 'ACTIVE' | 'INACTIVE';
 	createdAt: string;
+}
+
+export interface PaginationMeta {
+	total: number;
+	page: number;
+	limit: number;
+	totalPages: number;
+}
+
+export interface UserAPIResponse {
+	data: User[];
+	meta: PaginationMeta;
 }
