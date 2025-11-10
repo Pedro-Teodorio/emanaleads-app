@@ -38,8 +38,10 @@ export function useUpdateUserMutation({ setDialogOpen, setEditingUser }: UserMut
 			setDialogOpen(false);
 			setEditingUser(null);
 		},
-		onError: () => {
-			toast.error('Erro ao atualizar usuário!');
+		onError: (error) => {
+			if (axios.isAxiosError(error) && error.response) {
+				toast.error(error.response.data.message);
+			}
 		},
 	});
 }
@@ -55,12 +57,8 @@ export function useDeleteUserMutation({ setDeleteDialogOpen }: { setDeleteDialog
 			setDeleteDialogOpen(false);
 		},
 		onError: (error) => {
-			if (axios.isAxiosError(error) && error.response?.status === 400) {
-				toast.error('Você não pode deletar seu próprio usuário');
-			}
-
 			if (axios.isAxiosError(error) && error.response) {
-				toast.error(error.response.data.errors[0].message);
+				toast.error(error.response.data.message);
 			}
 		},
 	});

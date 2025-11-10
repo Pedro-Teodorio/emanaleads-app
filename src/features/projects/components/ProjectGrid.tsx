@@ -4,24 +4,27 @@ import { format } from "date-fns";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Project } from "@/mocks/projects";
-import { User } from "@/mocks/users";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Project } from "../types/projects";
+import { User } from "@/features/users/types/user";
 
 const statusConfig = {
-    planning: { label: "Planejamento", color: "bg-yellow-100 text-yellow-800 border-yellow-200" },
-    active: { label: "Ativo", color: "bg-green-100 text-green-800 border-green-200" },
-    paused: { label: "Pausado", color: "bg-orange-100 text-orange-800 border-orange-200" },
-    completed: { label: "Concluído", color: "bg-blue-100 text-blue-800 border-blue-200" },
+    PLANNING: { label: "Planejamento", color: "bg-yellow-100 text-yellow-800 border-yellow-200" },
+    ACTIVE: { label: "Ativo", color: "bg-green-100 text-green-800 border-green-200" },
+    PAUSED: { label: "Pausado", color: "bg-orange-100 text-orange-800 border-orange-200" },
+    COMPLETED: { label: "Concluído", color: "bg-blue-100 text-blue-800 border-blue-200" },
 };
 
 interface ProjectGridProps {
     projects: Project[];
     users: User[];
     loading: boolean;
+    onEdit: (project: Project) => void;
+    onDelete: (projectId: string) => void;
 }
 
-export default function ProjectGrid({ projects, users, loading }: ProjectGridProps) {
+export default function ProjectGrid({ projects, users, loading, onEdit, onDelete }: ProjectGridProps) {
     if (loading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -52,7 +55,7 @@ export default function ProjectGrid({ projects, users, loading }: ProjectGridPro
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project, index) => {
-                const admin = users.find(u => u.id === project.admin_id);
+                const admin = users.find(u => u.id === project.adminId);
 
                 return (
                     <motion.div
@@ -61,7 +64,7 @@ export default function ProjectGrid({ projects, users, loading }: ProjectGridPro
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
                     >
-                        <Card className="hover:shadow-lg transition-all duration-300 group">
+                        <Card className="hover:shadow-lg transition-all duration-300">
                             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
@@ -72,11 +75,11 @@ export default function ProjectGrid({ projects, users, loading }: ProjectGridPro
                                     </Badge>
                                 </div>
 
-                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex gap-1 ">
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => { }}
+                                        onClick={() => onEdit(project)}
                                         className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
                                     >
                                         <Pencil className="w-3.5 h-3.5" />
@@ -84,7 +87,7 @@ export default function ProjectGrid({ projects, users, loading }: ProjectGridPro
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => { }}
+                                        onClick={() => onDelete(project.id)}
                                         className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -108,10 +111,10 @@ export default function ProjectGrid({ projects, users, loading }: ProjectGridPro
                                             <span>{admin.name}</span>
                                         </div>
                                     )}
-                                    {project.start_date && (
+                                    {project.createdAt && (
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <Calendar className="w-4 h-4" />
-                                            <span>{format(new Date(project.start_date), "dd/MM/yyyy")}</span>
+                                            <span>{format(new Date(project.createdAt), "dd/MM/yyyy")}</span>
                                         </div>
                                     )}
                                 </div>

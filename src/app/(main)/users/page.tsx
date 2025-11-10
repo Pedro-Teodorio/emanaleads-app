@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/common/Page";
 import { PageContent } from "@/components/common/Page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import UserFormDialog from "@/features/users/components/UserCreateFormDialog";
+import UserFormDialog from "@/features/users/components/UserFormDialog";
 import UserGrid from "@/features/users/components/UserGrid";
 import { useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation } from "@/features/users/services/mutations";
 import { usersQueries } from "@/features/users/services/queries";
