@@ -6,18 +6,28 @@ interface GetUsersParams {
 	page?: number;
 	limit?: number;
 	search?: string;
+	role?: string;
+	status?: string;
 }
 
 export const fetchUserList = async ({
 	page = 1,
 	limit = 10,
 	search,
+	role,
+	status,
 }: GetUsersParams): Promise<UserAPIResponse> => {
 	const params = new URLSearchParams();
 	params.append('page', page.toString());
 	params.append('limit', limit.toString());
 	if (search) {
 		params.append('search', search);
+	}
+	if (role) {
+		params.append('role', role);
+	}
+	if (status) {
+		params.append('status', status);
 	}
 
 	const { data } = await api.get(`/users?${params.toString()}`);

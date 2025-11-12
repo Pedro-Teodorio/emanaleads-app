@@ -6,13 +6,14 @@ interface ProjectListParams {
 	page: number;
 	limit: number;
 	search?: string;
+	status?: string;
 }
 
 export const projectsQueries = {
-	list: ({ page, limit, search }: ProjectListParams) =>
+	list: ({ page, limit, search, status }: ProjectListParams) =>
 		queryOptions({
-			queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST, { page, limit, search }],
-			queryFn: () => fetchProjectsList({ page, limit, search }),
+			queryKey: [ProjectQueriesKeys.GET_PROJECT_LIST, { page, limit, search, status }],
+			queryFn: () => fetchProjectsList({ page, limit, search, status }),
 		}),
 	recent: () =>
 		queryOptions({

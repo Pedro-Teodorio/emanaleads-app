@@ -1,64 +1,67 @@
-# Plano de Execução da Tarefa: Implementar Paginação de Projetos
+# Plano de Execução da Tarefa: Implementar Filtro de Status na Página de Projetos
 
 ## 1.1. Análise da Arquitetura
 
-- [x] A nova funcionalidade de paginação será implementada na feature de `projects`, seguindo o padrão já estabelecido na feature `users`.
-- [x] Arquivos impactados:
-    - `src/features/projects/services/projects.ts`: Para atualizar a busca de dados.
-    - `src/features/projects/types/projects.ts`: Para adicionar os tipos da resposta paginada.
-    - `src/features/projects/services/queries.ts`: Para atualizar a query do React Query.
-    - `src/app/(main)/projects/page.tsx`: Para orquestrar a paginação e a busca.
-    - `src/components/common/Pagination.tsx`: Será utilizado para a UI de paginação.
-- [x] A implementação manterá a separação de responsabilidades existente.
+- [x] A nova funcionalidade se encaixa perfeitamente na arquitetura existente. O filtro será um novo estado gerenciado pelo componente da página, que será passado para a camada de `queries` do TanStack Query, que por sua vez o passará para a camada de `service` para a chamada de API.
+- [x] Os arquivos impactados serão:
+    - `src/features/projects/services/queries.ts`
+    - `src/features/projects/services/project.service.ts`
+    - `src/app/(main)/projects/page.tsx`
+    - `src/features/projects/constants/project.constants.ts` (para consumir as constantes)
+- [x] A implementação seguirá os padrões de componentização, gerenciamento de estado e chamadas de API já estabelecidos no projeto.
 
 ## 1.2. Análise do Design System
 
-- [x] Utilizar o componente `Pagination` existente em `src/components/common/Pagination.tsx`.
-- [x] Utilizar os componentes `Button`, `Input`, etc., do `shadcn/ui` que já estão em uso.
+- [x] O componente `Select` de `shadcn/ui` será utilizado para o filtro de status.
+- [x] Os componentes `Button` e `Input` já existentes serão mantidos para a busca.
+- [x] O layout será ajustado para acomodar o novo componente de filtro ao lado da barra de busca.
 
 ## 1.3. Análise dos Componentes
 
-- [x] **Modificar:** `src/app/(main)/projects/page.tsx`. Este componente será o orquestrador da lógica de paginação, lendo e escrevendo na URL e passando os dados para os componentes filhos.
-- [x] **Modificar:** `src/features/projects/components/ProjectGrid.tsx`. Apenas para garantir que continue recebendo a lista de projetos corretamente. Nenhuma mudança de lógica é esperada aqui.
+- [x] Componente a ser modificado: `src/app/(main)/projects/page.tsx`.
+- [ ] Nenhum novo componente de UI precisa ser criado, apenas o uso do `Select` de `shadcn/ui`.
 
 ## 1.4. Análise das Regras de Negócio
 
-- [x] A lógica de busca de dados foi atualizada para incluir os parâmetros `page`, `limit` e `search`.
-- [x] A URL será a fonte da verdade para o estado da paginação (`?page=1&limit=10&search=...`).
-- [x] A `UsersPage` será responsável por ler os `searchParams`, acionar a busca de dados com `useQuery`, e fornecer os handlers para navegação de página e busca, que por sua vez atualizam a URL.
+- [x] A lógica será implementada no componente `projects/page.tsx`.
+- [x] Um novo estado (`statusFilter`) será criado para armazenar o valor do filtro de status.
+- [x] A alteração do `Select` atualizará este estado e também os parâmetros da URL (`useSearchParams`).
+- [x] A `queryKey` do `useQuery` será atualizada para incluir o `statusFilter`, fazendo com que o TanStack Query refaça a busca automaticamente.
 
 ## 1.5. Definição de Componentes a Serem Criados/Modificados
 
-- [x] `src/features/projects/types/projects.ts`: (Modificar) Adicionar tipos `ProjectAPIResponse` e `PaginationMeta`.
-- [x] `src/features/projects/services/projects.ts`: (Modificar) Alterar a função `fetchProjectsList` para aceitar `{ page, limit, search }` e retornar a resposta paginada.
-- [x] `src/features/projects/services/queries.ts`: (Modificar) Alterar a query `projectsQueries.all` para `projectsQueries.list` e fazê-la aceitar os parâmetros de paginação.
-- [x] `src/app/(main)/projects/page.tsx`: (Refatorar) Implementar a lógica de controle da paginação, similar à `UsersPage`.
+- [ ] `projects/page.tsx`: Adicionar o componente `<Select>` para o filtro de status, gerenciar seu estado e integrá-lo com a lógica de busca de dados e atualização da URL.
+- [ ] `queries.ts`: Modificar a função `list` para aceitar o parâmetro `status`.
+- [ ] `project.service.ts`: Modificar a função de listagem para incluir o `status` nos parâmetros da requisição.
 
 ## 1.6. Definição da Estrutura de Tela e Navegação
 
-- [x] A rota `/projects` continuará a mesma.
-- [x] O estado da paginação será refletido na URL através de query strings.
+- [x] A tela existente em `/projects` será modificada.
+- [x] Um novo query param `status` será adicionado à URL para refletir o estado do filtro. Ex: `/projects?page=1&status=ACTIVE`.
 
 ## 1.7. Plano de Implementação das Regras de Negócio
 
-1.  [x] **Tipagem:** Definir os tipos `ProjectAPIResponse` e `PaginationMeta` em `src/features/projects/types/projects.ts`.
-2.  [x] **Serviço:** Atualizar `fetchProjectsList` em `src/features/projects/services/projects.ts` para aceitar `{ page, limit, search }`.
-3.  [x] **Query:** Atualizar `projectsQueries` em `src/features/projects/services/queries.ts` para passar os parâmetros para a função de fetch e para a `queryKey`.
-4.  [x] **Componente de Página:** Refatorar `app/(main)/projects/page.tsx` para:
-    - Usar `useSearchParams`, `useRouter` e `usePathname`.
-    - Ler `page`, `limit`, e `search` da URL.
-    - Chamar `useQuery(projectsQueries.list({ ...params }))`.
-    - Implementar handlers para busca e mudança de página que atualizam a URL.
-    - Renderizar o `ProjectGrid` com os dados paginados e o componente `Pagination` com os metadados.
+1.  **Atualizar `queries.ts`**: Modificar a query `list` para aceitar `status` e incluí-lo na `queryKey` e na chamada da `queryFn`.
+2.  **Atualizar `project.service.ts`**: Modificar a função `getProjects` (ou similar) para aceitar `status` e adicioná-lo aos `params` da requisição Axios.
+3.  **Atualizar `projects/page.tsx`**:
+    1.  Ler o parâmetro `status` da URL usando `useSearchParams`.
+    2.  Adicionar um estado local para o filtro de status, inicializado com o valor da URL.
+    3.  Adicionar o componente `<Select>` ao JSX, populado com os valores de `PROJECT_STATUSES`.
+    4.  Criar uma função `handleStatusChange` que atualiza a URL com o novo status e reseta a página para 1.
+    5.  Passar o `status` lido da URL para a chamada `useQuery(projectsQueries.list(...))`.
+    6.  Adicionar um botão "Limpar Filtros" que remove os parâmetros `search` e `status` da URL.
 
 ## 1.8. Plano de Validação da Tarefa
 
-- [ ] A lista de projetos carrega a primeira página por padrão.
-- [ ] A URL reflete a página e o limite atuais (ex: `/projects?page=1&limit=10`).
-- [ ] Clicar em "Próxima" no componente de paginação atualiza a URL e carrega os novos dados.
-- [ ] A busca por nome de projeto funciona e reseta a paginação para a página 1.
-- [ ] Os botões de paginação são desabilitados corretamente na primeira e última página.
+- [ ] Verificar se o componente `<Select>` é renderizado corretamente com todos os status.
+- [ ] Verificar se a seleção de um status atualiza a URL com o parâmetro `status`.
+- [ ] Verificar se a grade de projetos é atualizada para mostrar apenas os projetos com o status selecionado.
+- [ ] Verificar se o filtro de status funciona em conjunto com o filtro de busca por nome.
+- [ ] Verificar se o botão "Limpar" ou "Limpar Filtros" remove o parâmetro `status` da URL e exibe todos os projetos novamente.
+- [ ] Verificar se a paginação funciona corretamente com o filtro de status ativo.
 
 ## 1.9. Critérios de Sucesso para a Tarefa
 
-- [ ] O usuário pode navegar por todas as páginas da lista de projetos. A interface de paginação é funcional e sincronizada com a URL, permitindo uma experiência de usuário fluida e o compartilhamento de links para páginas específicas da lista.
+- [ ] O usuário consegue filtrar a lista de projetos por status usando um controle de `<Select>`.
+- [ ] O estado do filtro é persistido na URL através de query params.
+- [ ] A funcionalidade de busca e paginação continua operando corretamente em conjunto com o novo filtro.

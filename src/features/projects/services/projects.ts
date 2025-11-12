@@ -6,18 +6,23 @@ interface GetProjectsParams {
 	page?: number;
 	limit?: number;
 	search?: string;
+	status?: string;
 }
 
 export const fetchProjectsList = async ({
 	page = 1,
 	limit = 10,
 	search,
+	status,
 }: GetProjectsParams): Promise<ProjectAPIResponse> => {
 	const params = new URLSearchParams();
 	params.append('page', page.toString());
 	params.append('limit', limit.toString());
 	if (search) {
 		params.append('search', search);
+	}
+	if (status) {
+		params.append('status', status);
 	}
 
 	const { data } = await api.get(`/projects?${params.toString()}`);

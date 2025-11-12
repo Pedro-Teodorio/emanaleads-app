@@ -6,12 +6,14 @@ interface UserListParams {
 	page: number;
 	limit: number;
 	search?: string;
+	role?: string;
+	status?: string;
 }
 
 export const usersQueries = {
-	list: ({ page, limit, search }: UserListParams) =>
+	list: ({ page, limit, search, role, status }: UserListParams) =>
 		queryOptions({
-			queryKey: [UserQueriesKeys.GET_USER_LIST, { page, limit, search }],
-			queryFn: () => fetchUserList({ page, limit, search }),
+			queryKey: [UserQueriesKeys.GET_USER_LIST, { page, limit, search, role, status }],
+			queryFn: () => fetchUserList({ page, limit, search, role, status }),
 		}),
 };
