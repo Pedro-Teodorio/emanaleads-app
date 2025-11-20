@@ -15,5 +15,6 @@ export const usersQueries = {
 		queryOptions({
 			queryKey: [UserQueriesKeys.GET_USER_LIST, { page, limit, search, role, status }],
 			queryFn: () => fetchUserList({ page, limit, search, role, status }),
+			staleTime: 30 * 1000, // 30s
 		}),
 };

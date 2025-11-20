@@ -1,12 +1,27 @@
 import { api } from '@/lib/api';
 import { LoginSchema } from '../schemas/loginSchema';
+import axios from 'axios';
 
 export async function login(data: LoginSchema) {
-	const response = await api.post('/auth/login', data);
-	return response.data;
+	try {
+		const response = await api.post('/auth/login', data);
+		return response.data;
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw error; // será tratado pelo hook useFormErrors e toasts
+		}
+		throw error;
+	}
 }
 
 export async function logout() {
-	const response = await api.post('/auth/logout');
-	return response.data;
+	try {
+		const response = await api.post('/auth/logout');
+		return response.data;
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw error;
+		}
+		throw error;
+	}
 }

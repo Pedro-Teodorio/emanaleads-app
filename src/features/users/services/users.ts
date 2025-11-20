@@ -1,6 +1,7 @@
 import { api } from '@/lib/api';
 import { User, UserAPIResponse } from '../types/user';
 import { UserFormSchema } from '../schemas/user';
+import axios from 'axios';
 
 interface GetUsersParams {
 	page?: number;
@@ -10,13 +11,7 @@ interface GetUsersParams {
 	status?: string;
 }
 
-export const fetchUserList = async ({
-	page = 1,
-	limit = 10,
-	search,
-	role,
-	status,
-}: GetUsersParams): Promise<UserAPIResponse> => {
+export const fetchUserList = async ({ page = 1, limit = 10, search, role, status }: GetUsersParams): Promise<UserAPIResponse> => {
 	const params = new URLSearchParams();
 	params.append('page', page.toString());
 	params.append('limit', limit.toString());
@@ -35,15 +30,30 @@ export const fetchUserList = async ({
 };
 
 export const createUser = async (user: UserFormSchema): Promise<User> => {
-	const { data } = await api.post('/users', user);
-	return data;
+	try {
+		const { data } = await api.post('/users', user);
+		return data;
+	} catch (error) {
+		if (axios.isAxiosError(error)) throw error;
+		throw error;
+	}
 };
 
 export const updateUser = async (id: string, user: UserFormSchema): Promise<User> => {
-	const { data } = await api.put(`/users/${id}`, user);
-	return data;
+	try {
+		const { data } = await api.put(`/users/${id}`, user);
+		return data;
+	} catch (error) {
+		if (axios.isAxiosError(error)) throw error;
+		throw error;
+	}
 };
 
 export const deleteUser = async (id: string): Promise<void> => {
-	await api.delete(`/users/${id}`);
+	try {
+		await api.delete(`/users/${id}`);
+	} catch (error) {
+		if (axios.isAxiosError(error)) throw error;
+		throw error;
+	}
 };
