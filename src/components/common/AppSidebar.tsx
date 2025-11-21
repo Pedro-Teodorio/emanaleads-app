@@ -2,32 +2,21 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { Role, useAuthStore } from '@/store/auth.store';
-import { FolderKanban, LayoutDashboard, LogOut, Users, Zap } from 'lucide-react';
+import { LogOut, Zap } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { NAV_ITEMS } from '@/lib/rbac';
 
 export function AppSidebar() {
-    const navigationItems = [
-        {
-            title: "Dashboard",
-            url: "/dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            title: "Usuários",
-            url: "/users",
-            icon: Users,
-        },
-        {
-            title: "Projetos",
-            url: "/projects",
-            icon: FolderKanban,
-        },
-    ];
     const currentUser = useAuthStore((state) => state.user);
     const pathname = usePathname();
     const { mutate: logout } = useLogout();
     const handleLogout = () => logout();
+
+    // Filter navigation items by current user role
+    const navigationItems = NAV_ITEMS.filter((item) =>
+        currentUser?.role && item.roles.includes(currentUser.role)
+    );
 
     const getRoleBadgeColor = (role: Role) => {
         switch (role) {
@@ -63,17 +52,17 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {navigationItems.map((item) => (
-                                <SidebarMenuItem key={item.title}>
+                                <SidebarMenuItem key={item.label}>
                                     <SidebarMenuButton
                                         asChild
-                                        className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname === item.url
+                                        className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname === item.href
                                             ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
                                             : 'text-slate-600'
                                             }`}
                                     >
-                                        <Link href={item.url} className="flex items-center gap-3 px-4 py-3">
+                                        <Link href={item.href} className="flex items-center gap-3 px-4 py-3">
                                             <item.icon className="w-5 h-5" />
-                                            <span className="font-medium">{item.title}</span>
+                                            <span className="font-medium">{item.label}</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
