@@ -13,35 +13,28 @@ import { Lead } from "@/features/leads/types/leads";
 import { LeadFormSchema } from "@/features/leads/schemas/lead";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useState } from "react";
+import { useParams, useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Pagination } from "@/components/common/AppPagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { leadStatusConfig } from "@/features/leads/constants/leads";
 import { usePermissions } from "@/hooks/usePermissions";
-import { projectsQueries } from "@/features/projects/services/queries";
 import { type LeadStatus, getNextStatuses } from "@/lib/rbac";
+import { useMyProjects } from "@/features/projects/hooks/useProjectMembers";
 
-
-export default function LeadsPage() {
+export default function ProjectLeadsPage() {
+    const { id: projectId } = useParams<{ id: string }>();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const permissions = usePermissions();
+    const { data: myProjectsData } = useMyProjects();
 
-    // Redireciona ROOT/ADMIN para /projects, mantendo /leads somente para PROJECT_USER
-    useEffect(() => {
-        if (permissions.role && permissions.role !== 'PROJECT_USER') {
-            router.replace('/projects');
-        }
-    }, [permissions.role, router]);
-
-    // Parâmetros de paginação e busca da URL
+    // Força projectId nos parâmetros de busca
     const page = Number.parseInt(searchParams.get("page") || "1");
     const limit = Number.parseInt(searchParams.get("limit") || "6");
     const search = searchParams.get("search") || "";
     const statuses = searchParams.get("statuses") || "";
-    const projectId = searchParams.get("projectId") || "";
     const unassigned = searchParams.get("unassigned") === "true";
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -52,24 +45,18 @@ export default function LeadsPage() {
     const [statusLead, setStatusLead] = useState<Lead | null>(null);
     const [currentSearchTerm, setCurrentSearchTerm] = useState(search);
     const [currentStatuses, setCurrentStatuses] = useState(statuses);
-    const [currentProjectId, setCurrentProjectId] = useState(projectId);
     const [currentUnassigned, setCurrentUnassigned] = useState(unassigned);
 
-    // Fetch leads
+    // Fetch leads com projectId fixo
     const { data: leadsData, isLoading } = useQuery(
         leadsQueries.list({
             page,
             limit,
             search,
             statuses,
-            projectId,
+            projectId, // Força o filtro pelo projeto atual
             unassigned: unassigned ? "true" : "false",
         })
-    );
-
-    // Fetch projects for filter (ROOT/ADMIN only)
-    const { data: projectsData } = useQuery(
-        projectsQueries.list({ page: 1, limit: 100, search: "", status: "" })
     );
 
     // Mutations
@@ -79,10 +66,12 @@ export default function LeadsPage() {
     const { mutate: updateStatus, isPending: statusLoading } = useUpdateLeadStatusMutation({ setStatusDialogOpen });
 
     const handleSubmit = (data: LeadFormSchema) => {
+        // Força projectId no lead
+        const leadData = { ...data, projectId };
         if (editingLead) {
-            updateLead({ id: editingLead.id, lead: data });
+            updateLead({ id: editingLead.id, lead: leadData });
         } else {
-            createLead(data);
+            createLead(leadData);
         }
     };
 
@@ -108,22 +97,20 @@ export default function LeadsPage() {
     };
 
     const canUpdateLeadStatus = (lead: Lead): boolean => {
-        // Verifica se há transições disponíveis
         const nextStatuses = getNextStatuses(lead.status);
         if (nextStatuses.length === 0) return false;
 
-        // Validações por role
         if (!permissions.permissions?.canUpdateLeadStatus) return false;
 
-        // ROOT pode sempre
         if (permissions.role === 'ROOT') return true;
 
-        // ADMIN pode se o lead pertence a projeto administrado
         if (permissions.role === 'ADMIN') {
-            return permissions.canEditLead({ lead });
+            return permissions.canEditLead({
+                lead,
+                userProjects: myProjectsData?.data
+            });
         }
 
-        // PROJECT_USER pode se o lead está atribuído a ele
         if (permissions.role === 'PROJECT_USER') {
             return lead.assignedUserId === permissions.userId;
         }
@@ -143,11 +130,6 @@ export default function LeadsPage() {
         } else {
             newSearchParams.delete("statuses");
         }
-        if (currentProjectId) {
-            newSearchParams.set("projectId", currentProjectId);
-        } else {
-            newSearchParams.delete("projectId");
-        }
         if (currentUnassigned) {
             newSearchParams.set("unassigned", "true");
         } else {
@@ -160,13 +142,8 @@ export default function LeadsPage() {
     const handleClearSearch = () => {
         setCurrentSearchTerm("");
         setCurrentStatuses("");
-        setCurrentProjectId("");
         setCurrentUnassigned(false);
-        const newSearchParams = new URLSearchParams(searchParams.toString());
-        newSearchParams.delete("search");
-        newSearchParams.delete("statuses");
-        newSearchParams.delete("projectId");
-        newSearchParams.delete("unassigned");
+        const newSearchParams = new URLSearchParams();
         newSearchParams.set("page", "1");
         router.push(`${pathname}?${newSearchParams.toString()}`);
     };
@@ -177,18 +154,13 @@ export default function LeadsPage() {
         router.push(`${pathname}?${newSearchParams.toString()}`);
     };
 
-    // Evita flicker quando haverá redirecionamento para ROOT/ADMIN
-    if (permissions.role && permissions.role !== 'PROJECT_USER') {
-        return null;
-    }
-
     return (
         <>
             <PageContainer>
                 <PageHeader>
                     <div className="flex flex-col gap-2">
-                        <PageTitle>Leads</PageTitle>
-                        <PageDescription>Gerencie os leads do sistema Emanaleads</PageDescription>
+                        <PageTitle>Leads do Projeto</PageTitle>
+                        <PageDescription>Gerencie os leads deste projeto</PageDescription>
                     </div>
                     <PageActions>
                         {permissions.permissions?.canCreateLead && (
@@ -207,7 +179,7 @@ export default function LeadsPage() {
                 </PageHeader>
                 <PageContent container>
                     <div
-                        key={`${search}-${statuses}-${projectId}-${unassigned}`}
+                        key={`${search}-${statuses}-${unassigned}`}
                         className="flex flex-col md:flex-row gap-2 mb-2"
                     >
                         <div className="relative mb-4">
@@ -231,20 +203,6 @@ export default function LeadsPage() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        {permissions.permissions?.canAccessAllProjects && projectsData && (
-                            <Select value={currentProjectId} onValueChange={setCurrentProjectId}>
-                                <SelectTrigger className="w-full md:w-[200px]">
-                                    <SelectValue placeholder="Filtrar por projeto" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {projectsData.data.map((project) => (
-                                        <SelectItem key={project.id} value={project.id}>
-                                            {project.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        )}
                         <div className="flex items-center gap-2">
                             <input
                                 type="checkbox"
@@ -263,14 +221,11 @@ export default function LeadsPage() {
                         <Button className="bg-blue-900 text-white hover:bg-blue-800" onClick={handleSearch}>
                             Buscar
                         </Button>
-                        {(currentSearchTerm ||
-                            currentStatuses ||
-                            currentProjectId ||
-                            currentUnassigned) && (
-                                <Button variant="outline" onClick={handleClearSearch}>
-                                    Limpar
-                                </Button>
-                            )}
+                        {(currentSearchTerm || currentStatuses || currentUnassigned) && (
+                            <Button variant="outline" onClick={handleClearSearch}>
+                                Limpar
+                            </Button>
+                        )}
                     </div>
                     <LeadGrid
                         leads={leadsData?.data || []}
@@ -278,12 +233,14 @@ export default function LeadsPage() {
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                         onUpdateStatus={handleUpdateStatus}
-                        canEdit={(lead) =>
-                            permissions.canEditLead({ lead })
-                        }
-                        canDelete={(lead) =>
-                            permissions.canDeleteLead({ lead })
-                        }
+                        canEdit={(lead) => permissions.canEditLead({
+                            lead,
+                            userProjects: myProjectsData?.data
+                        })}
+                        canDelete={(lead) => permissions.canDeleteLead({
+                            lead,
+                            userProjects: myProjectsData?.data
+                        })}
                         canUpdateStatus={canUpdateLeadStatus}
                     />
                     {leadsData && (

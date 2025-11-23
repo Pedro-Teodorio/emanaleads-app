@@ -17,7 +17,9 @@ interface RoleGuardProps {
  */
 export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps) {
     const router = useRouter();
-    const { user, status } = useAuthStore();
+    // Seletores individuais para evitar recriação de objeto e loops
+    const user = useAuthStore((state) => state.user);
+    const status = useAuthStore((state) => state.status);
 
     useEffect(() => {
         if (status === 'pending') return;
@@ -56,7 +58,7 @@ export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps
  */
 export function useRoleRedirect() {
     const router = useRouter();
-    const { user } = useAuthStore();
+    const user = useAuthStore((state) => state.user);
 
     const redirectToDefault = () => {
         if (!user) return;
