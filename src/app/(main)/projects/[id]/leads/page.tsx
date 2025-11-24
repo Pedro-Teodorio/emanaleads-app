@@ -12,7 +12,7 @@ import { useCreateLeadMutation, useDeleteLeadMutation, useUpdateLeadMutation, us
 import { Lead } from "@/features/leads/types/leads";
 import { LeadFormSchema } from "@/features/leads/schemas/lead";
 import { useQuery } from "@tanstack/react-query";
-import { PlusCircle, Search } from "lucide-react";
+import { Download, PlusCircle, Search } from "lucide-react";
 import { useState } from "react";
 import { useParams, useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Pagination } from "@/components/common/AppPagination";
@@ -21,6 +21,7 @@ import { leadStatusConfig } from "@/features/leads/constants/leads";
 import { usePermissions } from "@/hooks/usePermissions";
 import { type LeadStatus, getNextStatuses } from "@/lib/rbac";
 import { useMyProjects } from "@/features/projects/hooks/useProjectMembers";
+import { useExportLeads } from "@/features/leads/hooks/useExportLeads";
 
 export default function ProjectLeadsPage() {
     const { id: projectId } = useParams<{ id: string }>();
@@ -46,6 +47,7 @@ export default function ProjectLeadsPage() {
     const [currentSearchTerm, setCurrentSearchTerm] = useState(search);
     const [currentStatuses, setCurrentStatuses] = useState(statuses);
     const [currentUnassigned, setCurrentUnassigned] = useState(unassigned);
+   
 
     // Fetch leads com projectId fixo
     const { data: leadsData, isLoading } = useQuery(
@@ -154,6 +156,17 @@ export default function ProjectLeadsPage() {
         router.push(`${pathname}?${newSearchParams.toString()}`);
     };
 
+      const { mutate: exportLeads, isPending: exportLoading } = useExportLeads();
+    
+        const handleExport = () => {
+            exportLeads({
+                search: currentSearchTerm || undefined,
+                statuses: currentStatuses || undefined,
+                projectId: projectId || undefined,
+                unassigned: currentUnassigned ? 'true' : undefined,
+            });
+        };
+
     return (
         <>
             <PageContainer>
@@ -175,6 +188,7 @@ export default function ProjectLeadsPage() {
                                 Novo Lead
                             </Button>
                         )}
+                      
                     </PageActions>
                 </PageHeader>
                 <PageContent container>
@@ -211,7 +225,18 @@ export default function ProjectLeadsPage() {
                                 Limpar
                             </Button>
                         )}
+                             {permissions.role === 'ADMIN' && (
+                            <Button
+                                className=" bg-green-700 text-white hover:bg-green-600"
+                                onClick={handleExport}
+                                disabled={exportLoading}
+                            >
+                                <Download className="inline-block size-4" />
+                                {exportLoading ? 'Exportando...' : 'Exportar CSV'}
+                            </Button>
+                        )}
                     </div>
+                 
                     <LeadGrid
                         leads={leadsData?.data || []}
                         loading={isLoading}

@@ -29,9 +29,9 @@ export default function LeadsPage() {
     const searchParams = useSearchParams();
     const permissions = usePermissions();
 
-    // Redireciona ROOT/ADMIN para /projects, mantendo /leads somente para PROJECT_USER
+    // Redireciona apenas ROOT (ADMIN agora acessa /leads)
     useEffect(() => {
-        if (permissions.role && permissions.role !== 'PROJECT_USER') {
+        if (permissions.role === 'ROOT') {
             router.replace('/projects');
         }
     }, [permissions.role, router]);
@@ -177,10 +177,6 @@ export default function LeadsPage() {
         router.push(`${pathname}?${newSearchParams.toString()}`);
     };
 
-    // Evita flicker quando haverá redirecionamento para ROOT/ADMIN
-    if (permissions.role && permissions.role !== 'PROJECT_USER') {
-        return null;
-    }
 
     return (
         <>
@@ -191,7 +187,7 @@ export default function LeadsPage() {
                         <PageDescription>Gerencie os leads do sistema Emanaleads</PageDescription>
                     </div>
                     <PageActions>
-                        {permissions.permissions?.canCreateLead && (
+                        {permissions.permissions?.canCreateLead && permissions.role === 'PROJECT_USER' && (
                             <Button
                                 className="w-full bg-blue-900 text-white hover:bg-blue-800"
                                 onClick={() => {

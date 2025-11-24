@@ -162,7 +162,7 @@ export const NAV_ITEMS: NavItem[] = [
 	{
 		label: 'Leads',
 		href: '/leads',
-		roles: ['PROJECT_USER'],
+		roles: ['ADMIN', 'PROJECT_USER'],
 		icon: SquareKanban,
 	},
 ];
