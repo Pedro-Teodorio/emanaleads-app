@@ -160,22 +160,7 @@ export function AppSidebar() {
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton
-                                        asChild
-                                        className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname.includes('/projects/' + selectedProjectId + '/details')
-                                            ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
-                                            : 'text-slate-600'
-                                            }`}
-                                    >
-                                        <Link href={`/projects/${selectedProjectId}/details`} className="flex items-center gap-3 px-4 py-3">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                            </svg>
-                                            <span className="font-medium">Detalhes & Campanhas</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
+                           
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>

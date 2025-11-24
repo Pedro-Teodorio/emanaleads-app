@@ -10,7 +10,7 @@ import { useProjectMembers, useRemoveProjectMember, useCreateAndAddMember } from
 import { AddMemberDialog } from "@/features/projects/components/AddMemberDialog";
 import { RemoveMemberDialog } from "@/features/projects/components/RemoveMemberDialog";
 import { useState } from "react";
-import { UserPlus, Trash2, User, Mail, Shield } from "lucide-react";
+import { UserPlus, Trash2, User, Mail } from "lucide-react";
 // Removidos imports de lista de usuários e permissões (não usados no fluxo simplificado)
 
 export default function ProjectMembersPage() {
@@ -92,7 +92,7 @@ export default function ProjectMembersPage() {
                 <PageContent container>
                     <div className="space-y-6">
                         {/* Admin Section */}
-                        <Card>
+                       { /*<Card>
                             <CardHeader>
                                 <CardTitle className="text-lg flex items-center gap-2">
                                     <Shield className="w-5 h-5 text-blue-600" />
@@ -124,7 +124,7 @@ export default function ProjectMembersPage() {
                                     </div>
                                 )}
                             </CardContent>
-                        </Card>
+                        </Card>*/}
 
                         {/* Members Section */}
                         <Card>

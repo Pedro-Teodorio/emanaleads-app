@@ -245,21 +245,6 @@ export default function LeadsPage() {
                                 </SelectContent>
                             </Select>
                         )}
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="unassigned"
-                                checked={currentUnassigned}
-                                onChange={(e) => setCurrentUnassigned(e.target.checked)}
-                                className="h-4 w-4 rounded border-gray-300"
-                            />
-                            <label
-                                htmlFor="unassigned"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Não atribuídos
-                            </label>
-                        </div>
                         <Button className="bg-blue-900 text-white hover:bg-blue-800" onClick={handleSearch}>
                             Buscar
                         </Button>
