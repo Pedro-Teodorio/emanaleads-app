@@ -33,6 +33,11 @@ export async function addProjectMember(projectId: string, userId: string) {
 	return data;
 }
 
+export async function createAndAddMember(projectId: string, userData: { name: string; email: string; phone?: string; password?: string }) {
+	const { data } = await api.post(`/projects/${projectId}/members/new`, userData);
+	return data;
+}
+
 export async function removeProjectMember(projectId: string, memberId: string) {
 	await api.delete(`/projects/${projectId}/members/${memberId}`);
 }

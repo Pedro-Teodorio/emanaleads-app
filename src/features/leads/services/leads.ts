@@ -53,8 +53,8 @@ interface CreateLeadData {
 	phone?: string;
 	position?: string;
 	requestType?: string;
-	projectId: string;
-	assignedUserId?: string;
+	projectId?: string; // Opcional - será inferido pelo backend
+	assignedUserId?: string; // Opcional - será inferido pelo backend
 	status?: LeadStatus;
 }
 

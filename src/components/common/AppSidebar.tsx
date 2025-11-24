@@ -92,31 +92,33 @@ export function AppSidebar() {
                     </div>
                 )}
 
-                <SidebarGroup>
-                    <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 py-2">
-                        Navegação
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {navigationItems.map((item) => (
-                                <SidebarMenuItem key={item.label}>
-                                    <SidebarMenuButton
-                                        asChild
-                                        className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname === item.href
-                                            ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
-                                            : 'text-slate-600'
-                                            }`}
-                                    >
-                                        <Link href={item.href} className="flex items-center gap-3 px-4 py-3">
-                                            <item.icon className="w-5 h-5" />
-                                            <span className="font-medium">{item.label}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                {currentUser?.role !== Role.ADMIN && (
+                    <SidebarGroup>
+                        <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 py-2">
+                            Navegação
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {navigationItems.map((item) => (
+                                    <SidebarMenuItem key={item.label}>
+                                        <SidebarMenuButton
+                                            asChild
+                                            className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname === item.href
+                                                ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
+                                                : 'text-slate-600'
+                                                }`}
+                                        >
+                                            <Link href={item.href} className="flex items-center gap-3 px-4 py-3">
+                                                <item.icon className="w-5 h-5" />
+                                                <span className="font-medium">{item.label}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
 
                 {/* Project Context Navigation for ADMIN when project is selected */}
                 {currentUser?.role === Role.ADMIN && selectedProjectId && (
@@ -130,8 +132,8 @@ export function AppSidebar() {
                                     <SidebarMenuButton
                                         asChild
                                         className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname.includes('/projects/' + selectedProjectId + '/leads')
-                                                ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
-                                                : 'text-slate-600'
+                                            ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
+                                            : 'text-slate-600'
                                             }`}
                                     >
                                         <Link href={`/projects/${selectedProjectId}/leads`} className="flex items-center gap-3 px-4 py-3">
@@ -162,8 +164,8 @@ export function AppSidebar() {
                                     <SidebarMenuButton
                                         asChild
                                         className={`hover:bg-slate-100 transition-all duration-200 rounded-xl mb-1 ${pathname.includes('/projects/' + selectedProjectId + '/details')
-                                                ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
-                                                : 'text-slate-600'
+                                            ? 'bg-blue-900 text-white hover:bg-blue-800 hover:text-white'
+                                            : 'text-slate-600'
                                             }`}
                                     >
                                         <Link href={`/projects/${selectedProjectId}/details`} className="flex items-center gap-3 px-4 py-3">

@@ -5,8 +5,6 @@ export const leadFormSchema = z
 		name: z.string().min(1, 'Nome é obrigatório'),
 		email: z.email('Email inválido').optional().or(z.literal('')),
 		phone: z.string().optional().or(z.literal('')),
-		projectId: z.uuid('Projeto inválido'),
-		assignedUserId: z.uuid('Usuário inválido').optional().or(z.literal('')),
 		requestType: z.string().optional().or(z.literal('')),
 		position: z.string().optional().or(z.literal('')),
 	})

@@ -10,14 +10,10 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Lead } from "../types/leads";
 import { useForm } from "react-hook-form";
 import { leadFormSchema, LeadFormSchema } from "../schemas/lead";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
-import { projectsQueries } from "@/features/projects/services/queries";
-import { usersQueries } from "@/features/users/services/queries";
 
 interface LeadFormDialogProps {
     open: boolean;
@@ -34,8 +30,6 @@ export default function LeadFormDialog({ open, onOpenChange, onSubmit, loading, 
             name: "",
             email: "",
             phone: "",
-            projectId: "",
-            assignedUserId: "",
             requestType: "",
             position: "",
         },
@@ -49,22 +43,11 @@ export default function LeadFormDialog({ open, onOpenChange, onSubmit, loading, 
             ...data,
             email: data.email || undefined,
             phone: data.phone || undefined,
-            assignedUserId: data.assignedUserId || undefined,
             requestType: data.requestType || undefined,
             position: data.position || undefined,
         };
         onSubmit(cleanedData as LeadFormSchema);
     };
-
-    // Fetch projects for dropdown (ROOT sees all, ADMIN sees own projects)
-    const { data: projectsData } = useQuery(
-        projectsQueries.list({ page: 1, limit: 100, search: "", status: "" })
-    );
-
-    // Fetch users for assignedUserId dropdown
-    const { data: usersData } = useQuery(
-        usersQueries.list({ page: 1, limit: 100, search: "", role: "", status: "" })
-    );
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -120,69 +103,6 @@ export default function LeadFormDialog({ open, onOpenChange, onSubmit, loading, 
                                 )}
                             />
                         </div>
-
-                        <FormField
-                            control={form.control}
-                            name="projectId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Projeto *</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger className="w-full h-11">
-                                                <SelectValue placeholder="Selecione um projeto" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {projectsData?.data.map((project) => (
-                                                <SelectItem key={project.id} value={project.id}>
-                                                    {project.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="assignedUserId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Atribuído a (opcional)</FormLabel>
-                                    <div className="flex gap-2">
-                                        <Select onValueChange={field.onChange} value={field.value || undefined}>
-                                            <FormControl>
-                                                <SelectTrigger className="w-full h-11">
-                                                    <SelectValue placeholder="Selecione um usuário" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {usersData?.data.map((user) => (
-                                                    <SelectItem key={user.id} value={user.id}>
-                                                        {user.name} ({user.email})
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {field.value && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="icon"
-                                                className="h-11 w-11 shrink-0"
-                                                onClick={() => field.onChange("")}
-                                            >
-                                                ×
-                                            </Button>
-                                        )}
-                                    </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField

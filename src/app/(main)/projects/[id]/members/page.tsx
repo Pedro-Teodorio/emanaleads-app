@@ -6,34 +6,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "next/navigation";
-import { useProjectMembers, useAddProjectMember, useRemoveProjectMember } from "@/features/projects/hooks/useProjectMembers";
+import { useProjectMembers, useRemoveProjectMember, useCreateAndAddMember } from "@/features/projects/hooks/useProjectMembers";
 import { AddMemberDialog } from "@/features/projects/components/AddMemberDialog";
 import { RemoveMemberDialog } from "@/features/projects/components/RemoveMemberDialog";
 import { useState } from "react";
 import { UserPlus, Trash2, User, Mail, Shield } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserList } from "@/features/users/services/users";
-import { usePermissions } from "@/hooks/usePermissions";
+// Removidos imports de lista de usuários e permissões (não usados no fluxo simplificado)
 
 export default function ProjectMembersPage() {
     const { id } = useParams<{ id: string }>();
-    const permissions = usePermissions();
+    // Removido uso de permissions; membros são gerenciados apenas via criação direta
     const { data: membersData, isLoading } = useProjectMembers(id);
-    const { data: usersData } = useQuery({
-        queryKey: ['users-list-all'],
-        queryFn: () => fetchUserList({ page: 1, limit: 100 }),
-        enabled: permissions.role === 'ROOT' || permissions.role === 'ADMIN',
-    });
+    // Removido fetch de lista de usuários para fluxo simplificado de criação direta
 
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState<{ id: string; name: string } | null>(null);
 
-    const { mutate: addMember, isPending: isAdding } = useAddProjectMember(id);
+    const { mutate: createMember, isPending: isCreating } = useCreateAndAddMember(id);
     const { mutate: removeMember, isPending: isRemoving } = useRemoveProjectMember(id);
 
-    const handleAddMember = (userId: string) => {
-        addMember(userId, {
+    const handleCreateNewMember = (userData: { name: string; email: string; phone?: string; password?: string }) => {
+        createMember(userData, {
             onSuccess: () => setAddDialogOpen(false),
         });
     };
@@ -49,10 +43,7 @@ export default function ProjectMembersPage() {
         }
     };
 
-    const availableUsers = usersData?.data.filter((u) =>
-        u.role === 'PROJECT_USER' &&
-        !membersData?.members.some((m) => m.user.id === u.id)
-    ) || [];
+    // Removido fluxo de seleção de usuário existente; criação direta
 
     if (isLoading) {
         return (
@@ -200,9 +191,8 @@ export default function ProjectMembersPage() {
             <AddMemberDialog
                 open={addDialogOpen}
                 onOpenChange={setAddDialogOpen}
-                availableUsers={availableUsers}
-                onSubmit={handleAddMember}
-                loading={isAdding}
+                onCreateNew={handleCreateNewMember}
+                loading={isCreating}
             />
 
             {selectedMember && (
