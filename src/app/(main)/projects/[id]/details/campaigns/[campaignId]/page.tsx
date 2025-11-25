@@ -231,7 +231,9 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                                 <div>
                                     <div className="text-sm text-slate-500">Atingido</div>
                                     <p className="text-xl font-bold text-slate-900 mt-1">
-                                        {formatPercent((campaign.qualified / campaign.goalQualifiedConv) * 100)}
+                                        {campaign.goalQualifiedConv > 0 
+                                            ? formatPercent((campaign.qualified / campaign.goalQualifiedConv) * 100)
+                                            : '-'}
                                     </p>
                                 </div>
                             </div>

@@ -29,6 +29,6 @@ export function formatNumber(value: number): string {
 }
 
 export function formatPercent(value: number | null | undefined): string {
-	if (value === null || value === undefined) return '-';
+	if (value === null || value === undefined || !Number.isFinite(value)) return '-';
 	return `${value.toFixed(1)}%`;
 }

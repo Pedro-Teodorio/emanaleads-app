@@ -36,9 +36,12 @@ export default function ProjectDetailsPage({ params }: ProjectDetailsPageProps) 
     const totalSales = campaigns.reduce((sum, c) => sum + c.sales, 0);
     const totalInvestmentGoogleAds = campaigns.reduce((sum, c) => sum + c.investmentGoogleAds, 0);
     const totalInvestmentTotal = campaigns.reduce((sum, c) => sum + c.investmentTotal, 0);
-    const avgApprovalsRate = campaigns.length > 0
-        ? campaigns.reduce((sum, c) => sum + (c.approvalsRate || 0), 0) / campaigns.length
-        : 0;
+    
+    // Calculate average only for campaigns with valid approvalsRate
+    const campaignsWithRate = campaigns.filter(c => c.approvalsRate !== null && c.approvalsRate !== undefined);
+    const avgApprovalsRate = campaignsWithRate.length > 0
+        ? campaignsWithRate.reduce((sum, c) => sum + (c.approvalsRate ?? 0), 0) / campaignsWithRate.length
+        : null;
 
     // Prepare chart data (ordered by date)
     const sortedCampaigns = [...campaigns].sort((a, b) => {
