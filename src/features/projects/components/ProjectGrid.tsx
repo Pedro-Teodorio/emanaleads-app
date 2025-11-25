@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Project } from "../types/projects";
@@ -113,9 +114,15 @@ export default function ProjectGrid({ projects, users, loading, onEdit, onDelete
                                     )}
                                 </div>
 
-                                <Button variant="ghost" className=" gap-2 group/btn flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300">
-                                    Ver Detalhes
-                                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                <Button
+                                    variant="ghost"
+                                    className="gap-2 group/btn flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 w-full"
+                                    asChild
+                                >
+                                    <Link href={`/projects/${project.id}/details`}>
+                                        Ver Detalhes
+                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                    </Link>
                                 </Button>
                             </CardContent>
                         </Card>
