@@ -149,7 +149,7 @@ export default function ProjectMembersPage() {
                                                     className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                                                 >
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 bg-linear-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-md">
+                                                        <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-md">
                                                             <span className="text-white font-semibold text-lg">
                                                                 {member.user.name[0].toUpperCase()}
                                                             </span>
