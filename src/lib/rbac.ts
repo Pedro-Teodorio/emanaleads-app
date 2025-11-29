@@ -155,14 +155,14 @@ export const NAV_ITEMS: NavItem[] = [
 	},
 	{
 		label: 'Projetos',
-		roles: ['ROOT'],
 		href: '/projects',
+		roles: ['ROOT'],
 		icon: FolderKanban,
 	},
 	{
 		label: 'Leads',
 		href: '/leads',
-		roles: ['ADMIN', 'PROJECT_USER'],
+		roles: ['ROOT', 'ADMIN', 'PROJECT_USER'],
 		icon: SquareKanban,
 	},
 ];
