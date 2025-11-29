@@ -16,6 +16,7 @@ import {
 import { useLogin } from '../hooks/useLogin';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +50,15 @@ export const LoginForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Senha</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Senha</FormLabel>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-blue-700 hover:underline"
+                >
+                  Esqueci minha senha
+                </Link>
+              </div>
               <FormControl>
                 <div className='relative'>
                   <Input type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" className='h-11' {...field} />

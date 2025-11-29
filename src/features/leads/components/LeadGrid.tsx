@@ -21,10 +21,11 @@ interface LeadGridProps {
 
 export default function LeadGrid({ leads, loading, onEdit, onDelete, onUpdateStatus, canEdit, canDelete, canUpdateStatus }: Readonly<LeadGridProps>) {
     if (loading) {
+        const skeletonKeys = Array.from({ length: 6 }, (_, i) => `lead-skeleton-${i}`);
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {new Array(6).fill(0).map((_, i) => (
-                    <Card key={i} className="border-0 shadow-md">
+                {skeletonKeys.map((key) => (
+                    <Card key={key} className="border-0 shadow-md">
                         <CardContent className="p-6">
                             <div className="flex items-start gap-4">
                                 <Skeleton className="w-16 h-16 rounded-xl shrink-0" />

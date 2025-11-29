@@ -13,7 +13,7 @@ import { Lead } from "@/features/leads/types/leads";
 import { LeadFormSchema } from "@/features/leads/schemas/lead";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Pagination } from "@/components/common/AppPagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -28,6 +28,13 @@ export default function LeadsPage() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const permissions = usePermissions();
+
+    // Redireciona apenas ROOT (ADMIN agora acessa /leads)
+    useEffect(() => {
+        if (permissions.role === 'ROOT') {
+            router.replace('/projects');
+        }
+    }, [permissions.role, router]);
 
     // Parâmetros de paginação e busca da URL
     const page = Number.parseInt(searchParams.get("page") || "1");
@@ -170,6 +177,7 @@ export default function LeadsPage() {
         router.push(`${pathname}?${newSearchParams.toString()}`);
     };
 
+
     return (
         <>
             <PageContainer>
@@ -179,7 +187,7 @@ export default function LeadsPage() {
                         <PageDescription>Gerencie os leads do sistema Emanaleads</PageDescription>
                     </div>
                     <PageActions>
-                        {permissions.permissions?.canCreateLead && (
+                        {permissions.permissions?.canCreateLead && permissions.role === 'PROJECT_USER' && (
                             <Button
                                 className="w-full bg-blue-900 text-white hover:bg-blue-800"
                                 onClick={() => {
@@ -233,21 +241,6 @@ export default function LeadsPage() {
                                 </SelectContent>
                             </Select>
                         )}
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="unassigned"
-                                checked={currentUnassigned}
-                                onChange={(e) => setCurrentUnassigned(e.target.checked)}
-                                className="h-4 w-4 rounded border-gray-300"
-                            />
-                            <label
-                                htmlFor="unassigned"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Não atribuídos
-                            </label>
-                        </div>
                         <Button className="bg-blue-900 text-white hover:bg-blue-800" onClick={handleSearch}>
                             Buscar
                         </Button>

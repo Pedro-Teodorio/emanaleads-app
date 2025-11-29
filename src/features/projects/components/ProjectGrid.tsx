@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Project } from "../types/projects";
@@ -19,6 +20,8 @@ interface ProjectGridProps {
 }
 
 export default function ProjectGrid({ projects, users, loading, onEdit, onDelete }: ProjectGridProps) {
+    const router = useRouter();
+
     if (loading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,7 +116,11 @@ export default function ProjectGrid({ projects, users, loading, onEdit, onDelete
                                     )}
                                 </div>
 
-                                <Button variant="ghost" className=" gap-2 group/btn flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300">
+                                <Button
+                                    variant="ghost"
+                                    className=" gap-2 group/btn flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
+                                    onClick={() => router.push(`/projects/${project.id}/details`)}
+                                >
                                     Ver Detalhes
                                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                                 </Button>

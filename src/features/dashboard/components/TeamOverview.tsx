@@ -27,7 +27,7 @@ export default function TeamOverview({ users, loading }: { users: User[], loadin
             <CardContent className="p-6">
                 {loading ? (
                     <div className="space-y-4">
-                        {[...Array(3)].map((_, i) => (
+                        {Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="flex items-center justify-between">
                                 <Skeleton className="h-4 w-24" />
                                 <Skeleton className="h-8 w-12" />
@@ -36,19 +36,21 @@ export default function TeamOverview({ users, loading }: { users: User[], loadin
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {Object.entries(roleStats).map(([role, count]) => (
-                            <div
-                                key={role}
-                                className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <Badge className={`${roleConfig[role as keyof typeof roleConfig]?.color} border`}>
-                                        {roleConfig[role as keyof typeof roleConfig]?.label}
-                                    </Badge>
+                        {Object.entries(roleStats)
+                            .filter(([role]) => role !== 'PROJECT_USER')
+                            .map(([role, count]) => (
+                                <div
+                                    key={role}
+                                    className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Badge className={`${roleConfig[role as keyof typeof roleConfig]?.color} border`}>
+                                            {roleConfig[role as keyof typeof roleConfig]?.label}
+                                        </Badge>
+                                    </div>
+                                    <span className="text-2xl font-bold text-slate-900">{count}</span>
                                 </div>
-                                <span className="text-2xl font-bold text-slate-900">{count}</span>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 )}
 

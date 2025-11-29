@@ -1,4 +1,4 @@
-import { User } from "@/mocks/users";
+import { User } from "@/features/users/types/user";
 import { projectFormSchema, ProjectFormSchema } from "../schemas/projects";
 import { Project } from "../types/projects";
 import { useForm } from "react-hook-form";
