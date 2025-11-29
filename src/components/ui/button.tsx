@@ -54,7 +54,11 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={`${cn(buttonVariants({ variant, size, className }))} hover:cursor-pointer`}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        loading && "opacity-50",
+        asChild && "cursor-pointer"
+      )}
       disabled={loading || props.disabled}
       {...props}
     >
