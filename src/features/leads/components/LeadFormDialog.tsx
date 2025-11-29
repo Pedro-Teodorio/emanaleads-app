@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,16 +26,26 @@ interface LeadFormDialogProps {
 export default function LeadFormDialog({ open, onOpenChange, onSubmit, loading, lead }: LeadFormDialogProps) {
 
     const form = useForm<LeadFormSchema>({
-        values: lead || {
-            name: "",
-            email: "",
-            phone: "",
-            requestType: "",
-            position: "",
+        defaultValues: {
+            name: lead?.name ?? "",
+            email: lead?.email ?? "",
+            phone: lead?.phone ?? "",
+            requestType: lead?.requestType ?? "",
+            position: lead?.position ?? "",
         },
         mode: "onChange",
         resolver: zodResolver(leadFormSchema),
     });
+
+    useEffect(() => {
+        form.reset({
+            name: lead?.name ?? "",
+            email: lead?.email ?? "",
+            phone: lead?.phone ?? "",
+            requestType: lead?.requestType ?? "",
+            position: lead?.position ?? "",
+        });
+    }, [lead, form]);
 
     const handleSubmit = (data: LeadFormSchema) => {
         // Limpar strings vazias antes de enviar
