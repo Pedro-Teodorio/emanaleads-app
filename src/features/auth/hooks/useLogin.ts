@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { login } from '../services/login';
-import { AuthKey } from './useCheckAuth';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { fetchUser } from '../services/user';
 import { useAuthStore } from '@/store/auth.store';
 import { useRouter } from 'next/navigation';
 import { fetchMyProjects } from '@/features/projects/services/members';
@@ -16,16 +14,18 @@ export function useLogin() {
 
 	return useMutation({
 		mutationFn: login,
-		onSuccess: async () => {
+		onSuccess: async (data) => {
 			try {
-				const user = await fetchUser();
-				setUser(user);
-				queryClient.setQueryData([AuthKey.CHECK_AUTH], user);
+				const { user, token } = data;
+				setUser({ ...user, token });
+				queryClient.invalidateQueries(); // Invalidate all queries to refetch data with new auth state
 				toast.success('Login realizado com sucesso!');
 
 				// Redirecionamento pós-login baseado em role
 				if (user.role === 'ADMIN') {
 					try {
+						// We need to ensure the new token is used for this request.
+						// The interceptor handles this, but we can pre-fetch to direct.
 						const projects = await fetchMyProjects();
 						const firstId = projects?.data?.[0]?.id;
 						const target = firstId ? `/projects/${firstId}/leads` : '/projects';
@@ -37,18 +37,19 @@ export function useLogin() {
 					const target = DEFAULT_ROUTES[user.role as SystemRole] || '/dashboard';
 					router.push(target);
 				}
-			} catch {
-				toast.error('Login bem-sucedido, mas falha ao buscar seus dados.');
+			} catch (e) {
+				toast.error('Login bem-sucedido, mas falha ao redirecionar.');
+				console.error(e);
 			}
 		},
 
 		onError: (error) => {
 			if (axios.isAxiosError(error) && error.response?.status === 401) {
 				toast.error('Email ou senha inválidos.');
-			}
-
-			if (axios.isAxiosError(error) && error.response) {
+			} else if (axios.isAxiosError(error) && error.response?.data?.errors?.[0]?.message) {
 				toast.error(error.response.data.errors[0].message);
+			} else {
+				toast.error('Ocorreu um erro ao tentar fazer o login.');
 			}
 		},
 	});
