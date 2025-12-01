@@ -11,20 +11,25 @@ import { DEFAULT_ROUTES, type SystemRole } from '@/lib/rbac';
 
 export function useLogin() {
 	const queryClient = useQueryClient();
-	const setUser = useAuthStore((state) => state.setUser);
+	const { setUser, setToken } = useAuthStore();
 	const router = useRouter();
 
 	return useMutation({
 		mutationFn: login,
-		onSuccess: async () => {
+		onSuccess: async (response) => {
 			try {
-				const user = await fetchUser();
-				setUser(user);
-				queryClient.setQueryData([AuthKey.CHECK_AUTH], user);
+				// Salvar token
+				const { token } = response;
+				setToken(token);
+
+				// Buscar dados atualizados do usuário
+				const userData = await fetchUser();
+				setUser(userData);
+				queryClient.setQueryData([AuthKey.CHECK_AUTH], userData);
 				toast.success('Login realizado com sucesso!');
 
 				// Redirecionamento pós-login baseado em role
-				if (user.role === 'ADMIN') {
+				if (userData.role === 'ADMIN') {
 					try {
 						const projects = await fetchMyProjects();
 						const firstId = projects?.data?.[0]?.id;
@@ -34,7 +39,7 @@ export function useLogin() {
 						router.push('/projects');
 					}
 				} else {
-					const target = DEFAULT_ROUTES[user.role as SystemRole] || '/dashboard';
+					const target = DEFAULT_ROUTES[userData.role as SystemRole] || '/dashboard';
 					router.push(target);
 				}
 			} catch {

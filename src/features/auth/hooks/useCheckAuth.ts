@@ -12,6 +12,10 @@ export function useCheckAuth() {
 	const zustandStatus = useAuthStore((state) => state.status);
 	const setUser = useAuthStore((state) => state.setUser);
 	const setUnauthenticated = useAuthStore((state) => state.setUnauthenticated);
+	const getToken = useAuthStore((state) => state.getToken);
+
+	// Só tenta buscar usuário se houver token
+	const hasToken = getToken() !== null;
 
 	const { data, isSuccess, isError } = useQuery({
 		queryKey: [AuthKey.CHECK_AUTH],
@@ -23,13 +27,20 @@ export function useCheckAuth() {
 			return failureCount < 3;
 		},
 		refetchOnWindowFocus: false,
-		enabled: zustandStatus === 'pending',
+		enabled: zustandStatus === 'pending' && hasToken,
 	});
 
 	useEffect(() => {
 		if (zustandStatus !== 'pending') {
 			return;
 		}
+
+		// Se não tem token, já marca como não autenticado
+		if (!hasToken) {
+			setUnauthenticated();
+			return;
+		}
+
 		if (isSuccess) {
 			setUser(data);
 		}
@@ -37,7 +48,7 @@ export function useCheckAuth() {
 		if (isError) {
 			setUnauthenticated();
 		}
-	}, [isSuccess, isError, data, setUser, setUnauthenticated, zustandStatus]);
+	}, [isSuccess, isError, data, setUser, setUnauthenticated, zustandStatus, hasToken]);
 
 	return { status: zustandStatus };
 }
