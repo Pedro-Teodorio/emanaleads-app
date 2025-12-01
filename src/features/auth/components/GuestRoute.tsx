@@ -38,8 +38,20 @@ export function GuestRoute({ children }: Readonly<GuestRouteProps>) {
         handleRedirect();
     }, [status, user, router]);
 
+    // Mostra loading enquanto valida sessão
+    if (status === 'pending') {
+        return (
+            <div className="grid place-items-center h-screen">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
+
+    // Mostra conteúdo da página guest apenas se não autenticado
     if (status === 'unauthenticated') {
         return <>{children}</>;
     }
+
+    // Se autenticado, aguarda redirecionamento (não mostra nada)
     return null;
 }
